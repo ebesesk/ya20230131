@@ -1,7 +1,7 @@
 <script>
-    import fastapi from "../lib/api";
+    import fastapi from "../../lib/api";
   //   import { link } from 'svelte-spa-router'
-    import { page } from "../lib/store"
+    import { page } from "../../lib/store"
     
     let video_list = []
     let size = 18
@@ -26,8 +26,14 @@
     
     get_videos_list(0)
     
-    import Modal from "../components/Modal.svelte";
+    import Modal from "../../components/Modal.svelte";
+    import VideoInfo from "./VideoInfo.svelte" 
     let modal
+    let videoInfo
+    function open_videoInfo_modal(video) {
+        videoInfo = video
+        modal.show()
+    }
 </script>
 
 
@@ -72,11 +78,12 @@
                     style="object-fit: scale-down;">
 
                 <!-- 모달 -->
-                <button class="btn btn-sm" on:click={modal.show(video)}>modal</button>
-                    <Modal bind:this={modal}>
-                        <!-- <p>Modal content</p> -->
-                        <button on:click={modal.hide()}>Close</button>
-                    </Modal>
+                <button class="btn btn-sm" on:click={open_videoInfo_modal(video)}>modal</button>
+                <Modal bind:this={modal}>
+                <!-- Modal content -->
+                    <VideoInfo  videoInfo = {videoInfo}/>
+                    <button on:click={modal.hide()}>Close</button>
+                </Modal>
                 <!-- 모달끝 -->
 
                 <a href="{'kddddds://http://' + video.dbid}" 
@@ -84,6 +91,7 @@
                     style="font-size:smaller; white-space: normal; word-break: break-all;">
                     {video.dbid.substring(video.dbid.indexOf('/')+1, video.dbid.lastIndexOf('.')).substr(0,16)}
                 </a>
+                <p>{video.id}</p>
             </div>
         </div>
         {/each}

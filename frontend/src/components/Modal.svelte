@@ -1,13 +1,14 @@
 <script>
   let _video = ''
   let shown = false;
-  export function show(video) {
-    _video = video
+  export function show() {
     shown = true;
   }
   export function hide() {
     shown = false;
   }
+
+  
 </script>
 <style>
     .modal-wrapper {
@@ -30,14 +31,23 @@
 
 {#if shown}
 <div class="modal-wrapper">
-    <div class="" 
-        style="background-color: white;
-        max-width: 80vw; 
-        padding: 1rem; 
-        margin: 15% auto;">
-        <span class="close" on:click={() => hide()}>&times;</span>
-        <p>{_video.id}</p>
-        <slot />
-    </div>
+  <div 
+    class="" 
+    style="
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: calc(100vw - 4em);
+    max-width: 32em;
+    max-height: calc(100vh - 14em);
+    overflow: auto;
+    transform: translate(-50%,-50%);
+    padding: 1em;
+    border-radius: 0.2em;
+    background: white;"
+    >
+    <span class="close" on:click={() => hide()}>&times;</span>
+    <slot />
+  </div>
 </div>
 {/if}
