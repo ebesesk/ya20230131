@@ -7,3 +7,7 @@ pydantic[email]
 passlib[bcrypt]
 python-multipart
 python-jose[cryptography]
+ffmpeg-python
+opencv-python
+integv
+pillow

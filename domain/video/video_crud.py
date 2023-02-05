@@ -23,7 +23,16 @@ def del_dbid(db: Session, dbid: str):
     video.delete(synchronize_session=False)
     db.commit()
 
-def input_videoinfo(db: Session, q: video_schema.Video_info_input):
+def input_videoinfo(db: Session, q: video_schema.Video_update):
     video = db.query(Video).filter(Video.id == q.id)
     video.update(q.__dict__)
     db.commit()
+    
+def create_new_video(db: Session, _video: video_schema.Video_create):
+    _video['date_posted'] = datetime.datetime.now()
+    print(_video)
+    video = Video(**_video)
+    db.add(video)
+    db.commit()
+    db.refresh(video)
+    
