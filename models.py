@@ -38,6 +38,7 @@ class Video(Base):
     cdate = Column(DateTime)
     
     display_quality = Column(String)
+    
     country = Column(String)
     face = Column(String)
     look = Column(String)

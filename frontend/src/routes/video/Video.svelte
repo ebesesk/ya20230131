@@ -29,13 +29,12 @@
     import Modal from "../../components/Modal.svelte";
     import VideoInfo from "./VideoInfo.svelte" 
     let modal
-    let videoInfo
+    let video_id
     function open_videoInfo_modal(video) {
-        videoInfo = video
+        video_id = video.id
         modal.show()
     }
 </script>
-
 
 
 
@@ -76,16 +75,16 @@
                 }' 
                     alt="" class="img-thumbnail img-responsive" 
                     style="object-fit: scale-down;">
-
-                <!-- 모달 -->
+                
+                    <!-- 모달 -->
                 <button class="btn btn-sm" on:click={open_videoInfo_modal(video)}>modal</button>
                 <Modal bind:this={modal}>
                 <!-- Modal content -->
-                    <VideoInfo  videoInfo = {videoInfo}/>
-                    <button on:click={modal.hide()}>Close</button>
+                    <VideoInfo  video_id = {video_id}/>
+                    <button on:click={modal.hide()} style="font-size: smaller;">Close</button>
                 </Modal>
                 <!-- 모달끝 -->
-
+                
                 <a href="{'kddddds://http://' + video.dbid}" 
                     class="caption display-7" 
                     style="font-size:smaller; white-space: normal; word-break: break-all;">
@@ -119,6 +118,3 @@
     <!-- 페이징처리 끝 -->
         
     </div>
-    
-    
-

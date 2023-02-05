@@ -1,23 +1,29 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, status
 from typing import List
 from sqlalchemy.orm import Session
 
 
 from database import get_db
-from .video_crud import get_all_videos, get_video_list
-from .video_schema import VideoItem, VideoItemsList
+from .video_crud import get_all_videos, get_video_list, get_video_id, input_videoinfo
+from .video_schema import Video_info, Video_info_list, Video_info_input
 # from models import Video
 # from db.repository.users import create_new_user
 
 router =APIRouter()
 
-@router.get("/all", response_model=list[VideoItem])
+
+@router.get("/detail/{video_id}", response_model=Video_info)
+def get_video(video_id: int, db: Session = Depends(get_db)):
+    video = get_video_id(db=db, video_id=video_id)
+    return video
+
+@router.get("/all", response_model=list[Video_info])
 def view_all(db: Session=Depends(get_db)):
     videos = get_all_videos(db)
     return videos
 
 
-@router.get("/list", response_model=VideoItemsList)
+@router.get("/list", response_model=Video_info_list)
 def get_list(db: Session = Depends(get_db),
                    page: int = 0,
                    size: int = 10):
@@ -31,3 +37,10 @@ def get_list(db: Session = Depends(get_db),
         'total': total,
         'video_list': video_list
     }
+
+@router.put("/input_videoinfo", status_code=status.HTTP_204_NO_CONTENT)
+def input_modified_videoinfo(_video_info: Video_info_input, db:Session=Depends(get_db)):
+    # from urllib.parse import unquote
+    # _video_info.dbid = unquote(_video_info.dbid)
+    
+    input_videoinfo(db=db, q=_video_info)
