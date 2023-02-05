@@ -28,20 +28,30 @@
     
     import Modal from "../../components/Modal.svelte";
     import VideoInfo from "./VideoInfo.svelte" 
-    let modal
+    import ScanFiles from "./Scanfiles.svelte"
+    
+    let modal_scanfiles
+    let modal_videoInfo
     let video_id
+
     function open_videoInfo_modal(video) {
         video_id = video.id
-        modal.show()
+        modal_videoInfo.show()
     }
+    
+    
 </script>
+
+
+
+
 
 
 
 
 <div class="container my-2 " style="width: 100%; height: 100%; ">
     <!-- 페이징처리 시작 -->
-    <ul class="pagination justify-content-center">
+    <ul class="pagination justify-content-center" style="font-size: smaller;">
         <!-- 이전페이지 -->
         <li class="page-item {$page <= 0 && 'disabled'}">
             <button class="page-link" on:click="{() => get_videos_list($page-1)}"  style="font-size: smaller;">이전</button>
@@ -58,14 +68,13 @@
         <li class="page-item {$page >= total_page-1 && 'disabled'}">
             <button class="page-link" on:click="{() => get_videos_list($page+1)}"  style="font-size: smaller;">다음</button>
         </li>
+        <button class="btn btn-sm justify-content-center" on:click={modal_scanfiles.show}>Scan Files</button>
     </ul>
     <!-- 페이징처리 끝 -->
     
     <div class="row" style="float: none; margin:100 auto;">
         {#each video_list as video}
         <div class="col-xxl-3 col-xl-4 col-lg-4 col-sm-6" style="object-fit: scale-down;">
-            
-            
             <div class="img-container">
                 <img 
                 src='{
@@ -76,15 +85,7 @@
                     alt="" class="img-thumbnail img-responsive" 
                     style="object-fit: scale-down;">
                 
-                    <!-- 모달 -->
                 <button class="btn btn-sm" on:click={open_videoInfo_modal(video)}>modal</button>
-                <Modal bind:this={modal}>
-                <!-- Modal content -->
-                    <VideoInfo  video_id = {video_id}/>
-                    <button on:click={modal.hide()} style="font-size: smaller;">Close</button>
-                </Modal>
-                <!-- 모달끝 -->
-                
                 <a href="{'kddddds://http://' + video.dbid}" 
                     class="caption display-7" 
                     style="font-size:smaller; white-space: normal; word-break: break-all;">
@@ -96,6 +97,8 @@
         {/each}
     </div>
         
+
+
     <!-- 페이징처리 시작 -->
     <ul class="pagination justify-content-center">
         <!-- 이전페이지 -->
@@ -117,4 +120,22 @@
     </ul>
     <!-- 페이징처리 끝 -->
         
-    </div>
+</div>
+
+
+<!-- 모달 -->
+<Modal bind:this={modal_videoInfo}>
+<!-- Modal content -->
+    <VideoInfo  video_id = {video_id}/>
+    <button on:click={modal_videoInfo.hide()} style="font-size: smaller;">Close</button>
+</Modal>
+
+<Modal bind:this={modal_scanfiles}>
+    <!-- Modal content -->
+    <ScanFiles />
+    <button on:click={modal_scanfiles.hide()} style="font-size: smaller;">Close</button>
+    </Modal>
+    
+
+
+<!-- 모달끝 -->

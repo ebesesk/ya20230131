@@ -16,6 +16,13 @@ def get_video_list(db: Session, skip:int=0, limit:int=0):
     video_list = _video_list.offset(skip).limit(limit).all()
     return total, video_list
 
+def del_dbid(db: Session, dbid: str):
+    video = db.query(Video).filter(Video.dbid == dbid)
+    if not video.first():
+        return f'{dbid} db 없음'
+    video.delete(synchronize_session=False)
+    db.commit()
+
 def input_videoinfo(db: Session, q: video_schema.Video_info_input):
     video = db.query(Video).filter(Video.id == q.id)
     video.update(q.__dict__)

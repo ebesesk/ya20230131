@@ -4,6 +4,11 @@ from typing import Union, Optional
 from datetime import date
 from typing import List
 
+class Video_dbids(BaseModel):
+    dbid: str
+    class Config:
+        orm_mode = True
+    
 
 class Video_info_input(BaseModel):
     id: int

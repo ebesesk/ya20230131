@@ -12,5 +12,5 @@ class Settings:
     
     MANGA_DIR = os.environ.get("MANGA_DIR")
     MANGA_HTTP = os.environ.get("MANGA_HTTP")
-    
+    VIDEO_DIR = os.environ.get("VIDEO_DIR")
 settings = Settings()
