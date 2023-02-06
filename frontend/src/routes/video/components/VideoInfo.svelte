@@ -1,5 +1,5 @@
 <script>
-    import fastapi from "../../lib/api";
+    import fastapi from "../../../lib/api";
 
     export let video_id
     let video = {}

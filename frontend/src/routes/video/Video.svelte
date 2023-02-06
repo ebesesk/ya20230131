@@ -27,8 +27,8 @@
     get_videos_list(0)
     
     import Modal from "../../components/Modal.svelte";
-    import VideoInfo from "./VideoInfo.svelte" 
-    import ScanFiles from "./Scanfiles.svelte"
+    import VideoInfo from "./components/VideoInfo.svelte" 
+    import ScanFiles from "./components/Scanfiles.svelte"
     
     let modal_scanfiles
     let modal_videoInfo
@@ -68,10 +68,13 @@
         <li class="page-item {$page >= total_page-1 && 'disabled'}">
             <button class="page-link" on:click="{() => get_videos_list($page+1)}"  style="font-size: smaller;">다음</button>
         </li>
-        <button class="btn btn-sm justify-content-center" on:click={modal_scanfiles.show}>Scan Files</button>
+        <button class="btn btn-sm justify-content-center" on:click={modal_scanfiles.show()}>Scan Files</button>
     </ul>
     <!-- 페이징처리 끝 -->
     
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+
     <div class="row" style="float: none; margin:100 auto;">
         {#each video_list as video}
         <div class="col-xxl-3 col-xl-4 col-lg-4 col-sm-6" style="object-fit: scale-down;">
@@ -134,7 +137,7 @@
     <!-- Modal content -->
     <ScanFiles />
     <button on:click={modal_scanfiles.hide()} style="font-size: smaller;">Close</button>
-    </Modal>
+</Modal>
     
 
 

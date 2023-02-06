@@ -54,3 +54,7 @@ def view_scanned_files(db: Session=Depends(get_db)):
 @router.get("/add_dbids")
 def add_files_to_dbids(db: Session=Depends(get_db)):
     return video_util.add_dbids(db)
+
+# @router.get("/del_dbids")
+# def dell_dbids_gif_webp(db: Session=Depends(get_db)):
+    
