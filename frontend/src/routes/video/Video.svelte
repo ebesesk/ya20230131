@@ -3,6 +3,7 @@
   //   import { link } from 'svelte-spa-router'
     import { page } from "../../lib/store"
     
+    let search = "test2"
     let video_list = []
     let size = 18
     // let page = 0
@@ -15,6 +16,7 @@
         let params = {
             page: _page,
             size: size,
+            search: search 
         }
         fastapi('get', '/api/video/list', params, (json) => {
             // console.log(json)
@@ -72,7 +74,7 @@
     </ul>
     <!-- 페이징처리 끝 -->
     
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <!-- <br><br><br><br><br><br><br><br><br><br><br><br><br><br> -->
 
 
     <div class="row" style="float: none; margin:100 auto;">
@@ -94,7 +96,6 @@
                     style="font-size:smaller; white-space: normal; word-break: break-all;">
                     {video.dbid.substring(video.dbid.indexOf('/')+1, video.dbid.lastIndexOf('.')).substr(0,16)}
                 </a>
-                <p>{video.id}</p>
             </div>
         </div>
         {/each}

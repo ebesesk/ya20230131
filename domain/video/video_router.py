@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from typing import List
 from sqlalchemy.orm import Session
-
+from pathlib import Path
 
 from database import get_db
 from .video_crud import get_all_videos, get_video_list, get_video_id, input_videoinfo, del_dbid
@@ -27,9 +27,10 @@ def view_all(db: Session=Depends(get_db)):
 
 @router.get("/list", response_model=Video_info_list)
 def get_list(db: Session = Depends(get_db),
-                   page: int = 0,
-                   size: int = 10):
-    total, video_list = get_video_list(db=db, skip=page*size, limit=size)
+             page: int = 0,
+             size: int = 10,
+             search: str = 'test2'):
+    total, video_list = get_video_list(db=db, skip=page*size, limit=size, search=search)
     # manga_list = []
     # for manga in _manga_list:
     #     images = manga_util.get_images(manga.title)
@@ -57,4 +58,10 @@ def add_files_to_dbids(db: Session=Depends(get_db)):
 
 # @router.get("/del_dbids")
 # def dell_dbids_gif_webp(db: Session=Depends(get_db)):
-    
+
+# @router.get('/stream')    
+# def get_video(request: Request, dbid: str):
+#     video_path = Path(settings.VIDEO_DIR + dbid)
+#     return range_requests_response(
+#         request, file_path = video_path, content_type="video/mp4"
+#     )

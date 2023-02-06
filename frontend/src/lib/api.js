@@ -20,11 +20,13 @@ const fastapi = (operation, url, params, success_callback, failure_callback) => 
     if(method === 'get') {
         _url += "?" + new URLSearchParams(params)
     }
-
+    console.log(_url)
     let options = {
         method: method,
         headers: {"Content-Type": content_type}
     }
+    
+    console.log(options)
 
     const _access_token = get(access_token)
     if (_access_token) {
