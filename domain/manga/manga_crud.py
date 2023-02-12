@@ -27,3 +27,8 @@ def delete_db_list(db:Session, mangas:List[Manga]):
     for manga in mangas:
         db.delete(manga)
     db.commit()
+
+def delete_id(db:Session, _id):
+    manga = db.query(Manga).filter(Manga.id == _id)
+    manga.delete(synchronize_session=False)
+    db.commit()

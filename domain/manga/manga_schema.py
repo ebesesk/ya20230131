@@ -7,7 +7,7 @@ class Manga(BaseModel):
     title: str
     tag: str | None = None
     created_date: datetime.datetime | None = None
-    images: List[str]
+    images: List[str] | None = None
     
     
 class MangaList(BaseModel):

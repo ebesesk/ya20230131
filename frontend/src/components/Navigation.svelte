@@ -1,12 +1,13 @@
 <script>
     import { link } from 'svelte-spa-router'
-  import { page, access_token, username, is_login } from '../lib/store';
+  import { page, keyword, access_token, username, is_login } from '../lib/store';
 </script>
 
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
     <div class="container-fluid">
-        <a use:link class="navbar-brand" href="/">Pybo</a>
+        <a use:link class="navbar-brand" href="/"
+          on:click="{() => {$keyword='test2', $page=0}}">Pybo</a>
         <button
             class="navbar-toggler"
             type="button"
@@ -34,7 +35,10 @@
                         <a use:link class="nav-link" href="/manga">만화</a>
                     </li>
                     <li class="nav-item">
-                        <a use:link class="nav-link" href="/video">동영상</a>
+                        <a use:link class="nav-link" href="/video" on:click={() => {
+                            $keyword='{"resolution":[],"display_quality":[],"country":[],"face":[],"look":[],"age":[],"pussy":[],"etc":"test2"}', 
+                            $page=0
+                            }}>동영상</a>
                     </li>
                 {:else}
                     <li class="nav-item">

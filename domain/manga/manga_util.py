@@ -25,6 +25,10 @@ def get_manga_list():
 
 def get_images(manga:str):
     images = []
-    for i in os.listdir(settings.MANGA_DIR + '/' + manga):
-        images.append(MANGA_HTTP + '/' + manga + '/' + i)
-    return images
+    _path = settings.MANGA_DIR + '/' + manga
+    if os.path.isdir(_path):
+        for i in os.listdir(_path):
+            images.append(MANGA_HTTP + '/' + manga + '/' + i)
+        return images
+    else:
+        return False

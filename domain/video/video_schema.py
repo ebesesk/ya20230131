@@ -40,7 +40,7 @@ class Video_update(BaseModel):
     ad_finish: int | None = None
     star: int | None = None
     
-    # date_posted: date | None = None
+    date_posted: date | None = None
     date_modified: date | None = None
 
 class Video_create(BaseModel):

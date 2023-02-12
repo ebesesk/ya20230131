@@ -1,49 +1,43 @@
 <script>
-    import fastapi from "../../../lib/api";
-
-    export let video_id
-    let video = {}
-    let inputs 
-    
-    function get_video() {
-        fastapi ('get', '/api/video/detail/' + video_id, {}, (json) => {
-            video = json
-            console.log(video)
-            console.log(video.display_quality)
-        })
-    }
-    
-    get_video()
-        
-    function post_videoinfo(event) {
-        event.preventDefault()
-        console.log(video)
-    }
-
-    // let _key = ['id','dbid','width','height','showtime','bitrate','filesize','date_posted','date_modified'] // ,'cdate','display_quality','country','face','look','age','pussy','etc','school_uniform','hip','group','pregnant','conversation','lesbian','ani','oral','masturbation','massage','uniform','family','ad_start','ad_finish','star']
-    let _key = ['id','dbid','width','height','showtime','bitrate','filesize','date_posted','date_modified',
-                'cdate','display_quality', 'country', 'face', 'look','age','pussy','etc'] // ,'cdate','display_quality','country','face','look','age','pussy','etc','school_uniform','hip','group','pregnant','conversation','lesbian','ani','oral','masturbation','massage','uniform','family','ad_start','ad_finish','star']
-
+  import fastapi from "../../../lib/api";
+  // import { push } from 'svelte-spa-router'
+  
+  export let video_id
+  let video = {}
+  let inputs 
+  
+  function get_video() {
+    fastapi ('get', '/api/video/detail/' + video_id, {}, (json) => {
+      video = json
+      // console.log(video)
+      // console.log(video.display_quality)
+    })
+  }
+  get_video()
+  
+  function post_videoinfo(event) {
+    event.preventDefault()
+    // console.log(video)
+    fastapi('put', '/api/video/input_videoinfo', video )
+  }
+  
 
 </script> 
-  
-  <!-- <div class="ratio ratio-16x9">
-      <video class="embed-responsive-item" width="864" controls autoplay="" loop="" muted="muted">
-          <source src="{encodeURIComponent('/video/' + video.dbid)}" type="video/mp4">
-          </video>
-        </div> -->
+
+
   <b>{video.id}</b> <br> 
-  <!-- <div class="ratio ratio-16x9">
-    <iframe src="{encodeURIComponent('/video/' + video.dbid)}" frameborder="0" muted="muted"></iframe>
-  </div> -->
+
+  <div class="ratio ratio-16x9">
+    <iframe src="{encodeURIComponent('/video/' + video.dbid)}" frameborder="0" muted></iframe>
+  </div>
 
   <div class="videoinfo" style="font-size:smaller; white-space: normal; word-break: break-all;">
     
-    {video.dbid} <br> 
-    {video.width}x{video.height} # 
-    {parseInt(video.showtime/60)}분{video.showtime%60}초 #
-    {parseInt(video.bitrate/1000)}kbps # {parseInt(video.filesize/1000000)}MB<br>
-    수정 날자: {video.date_modified}  작성 날자: {video.date_posted}  cdate: {video.cdate}<br>
+    # {video.dbid} # {video.etc}
+    # {video.width}x{video.height} 
+    # {parseInt(video.showtime/60)}분{video.showtime%60}초
+    # {parseInt(video.bitrate/1000)}kbps # {parseInt(video.filesize/1000000)}MB
+    # 수정 날자: {video.date_modified}  # 작성 날자: {video.date_posted}  # cdate: {video.cdate}<br>
 
     
     <form method="post">
@@ -197,7 +191,7 @@
             <option value="5">♥♥♥♥♥</option>
         </select>
         <b class="text-danger">{"♥".repeat(video.star)}</b> 
-      etc
+      etc :
       <label>
         <input type="text" bind:value={video.etc} placeholder="{video.etc}"/>
       </label><br>

@@ -1,6 +1,5 @@
 <script>
   import { createEventDispatcher, onDestroy } from 'svelte';
-
   const handle_keydown = e => {
     if (e.key === 'Escape') {
       close();
@@ -32,6 +31,8 @@
 	}
   
   
+    
+
   let _video = ''
   let shown = false;
   export function show() {
@@ -41,6 +42,9 @@
     shown = false;
   }
   
+
+
+
 </script>
 
 {#if shown}
@@ -70,8 +74,9 @@
 <style>
     .modal-wrapper {
         background-color: rgb(0,0,0);
-        background-color: rgba(0,0,0,0.9);
+        background-color: rgba(0,0,0,0.7);
         position: fixed;
+        /* position: absolute; */
         width: 100%;
         height: 100%;
         top: 0;

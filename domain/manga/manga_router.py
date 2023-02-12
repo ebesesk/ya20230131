@@ -8,7 +8,7 @@ from database import get_db
 
 from ..login.login_router import get_current_user
 from . import manga_schema
-from .manga_crud import bulk_insert_mangas, get_all_mangas, delete_db_list, get_manga_list
+from .manga_crud import bulk_insert_mangas, get_all_mangas, delete_db_list, get_manga_list, delete_id
 from . import manga_util
 from models import Manga
 
@@ -18,8 +18,9 @@ from config import settings
 router = APIRouter()
 
 
-@router.get("/refresh", response_model=List[manga_schema.Manga])
+@router.get("/refresh")#, response_model=List[manga_schema.Manga])
 def manga_refresh(db: Session = Depends(get_db)):
+    
     mangas_dir = manga_util.get_manga_list()
     mangas_db = get_all_mangas(db)
     manga_titles = [i.title for i in mangas_db]
@@ -38,7 +39,7 @@ def manga_refresh(db: Session = Depends(get_db)):
             mangas_empty.append(manga)
     delete_db_list(db=db, mangas=mangas_empty)
     
-    return mangas_new
+    return {'new':mangas_new}
 
 
 @router.get("/list", response_model=manga_schema.MangaList)
@@ -49,8 +50,14 @@ def get_list(db: Session = Depends(get_db),
     manga_list = []
     for manga in _manga_list:
         images = manga_util.get_images(manga.title)
-        manga_list.append({'id': manga.id,'title': manga.title,'tag': manga.tag,'created_date': manga.created_date, 'images': images})
-        
+        if images:
+            manga_list.append({'id': manga.id,
+                               'title': manga.title,
+                               'tag': manga.tag,
+                               'created_date': manga.created_date, 
+                               'images': images})
+        else:
+            delete_id(db, manga.id)
     return {
         'total': total,
         'manga_list': manga_list
