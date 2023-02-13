@@ -17,3 +17,10 @@ class UserCreate(BaseModel):
         if 'password1' in values and v != values['password1']:
             raise ValueError('비밀번호가 일치하지 않습니다.')
         return v
+
+class User(BaseModel):
+    id: int
+    username: str
+    
+    class Config:
+        orm_mode = True

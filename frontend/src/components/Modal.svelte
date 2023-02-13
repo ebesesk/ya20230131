@@ -74,7 +74,7 @@
 <style>
     .modal-wrapper {
         background-color: rgb(0,0,0);
-        background-color: rgba(0,0,0,0.7);
+        background-color: rgba(0,0,0,0.4);
         position: fixed;
         /* position: absolute; */
         width: 100%;

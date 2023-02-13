@@ -1,7 +1,22 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean, Date
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean, Date, Table
 from sqlalchemy.orm import relationship
 
 from database import Base
+
+
+
+manga_voter = Table(
+    'manga_voter',
+    Base.metadata,
+    Column('user_id', Integer, ForeignKey('user.id'), primary_key=True),
+    Column('manga_id', Integer, ForeignKey('manga.id'), primary_key=True)
+)
+video_voter = Table(
+    'video_voter', 
+    Base.metadata,
+    Column('user_id', Integer, ForeignKey('user.id'), primary_key=True),
+    Column('video_id', Integer, ForeignKey('video.id'), primary_key=True)
+)
 
 
 class User(Base):
@@ -23,6 +38,7 @@ class Manga(Base):
     # images = Column(Text, nullable=True)
     tag = Column(Text, nullable=True)
     created_date = Column(DateTime, nullable=True)
+    voter = relationship('User', secondary=manga_voter, backref='manga_voters')
 
 
 class Video(Base):
@@ -65,3 +81,4 @@ class Video(Base):
     
     date_posted = Column(Date)
     date_modified = Column(Date)
+    voter = relationship('User', secondary=video_voter, backref='video_voters')

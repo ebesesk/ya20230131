@@ -8,9 +8,9 @@ from database import get_db
 
 from ..login.login_router import get_current_user
 from . import manga_schema
-from .manga_crud import bulk_insert_mangas, get_all_mangas, delete_db_list, get_manga_list, delete_id
+from .manga_crud import bulk_insert_mangas, get_all_mangas, delete_db_list, get_manga_list, delete_id, vote_manga, get_manga
 from . import manga_util
-from models import Manga
+from models import Manga, User
 
 from config import settings
 
@@ -42,10 +42,12 @@ def manga_refresh(db: Session = Depends(get_db)):
     return {'new':mangas_new}
 
 
-@router.get("/list", response_model=manga_schema.MangaList)
+@router.get("/list")
+# @router.get("/list", response_model=manga_schema.MangaList)
 def get_list(db: Session = Depends(get_db),
                    page: int = 0,
                    size: int = 10):
+    # get_manga_list(db=db, skip=page*size, limit=size)
     total, _manga_list = get_manga_list(db=db, skip=page*size, limit=size)
     manga_list = []
     for manga in _manga_list:
@@ -54,7 +56,8 @@ def get_list(db: Session = Depends(get_db),
             manga_list.append({'id': manga.id,
                                'title': manga.title,
                                'tag': manga.tag,
-                               'created_date': manga.created_date, 
+                               'created_date': manga.created_date,
+                               'voter': manga.voter, 
                                'images': images})
         else:
             delete_id(db, manga.id)
@@ -62,4 +65,14 @@ def get_list(db: Session = Depends(get_db),
         'total': total,
         'manga_list': manga_list
     }
- 
+
+@router.post("/vote", status_code=status.HTTP_204_NO_CONTENT)
+def manga_vote(_manga_vote: manga_schema.MangaVote,
+               db: Session = Depends(get_db),
+               current_user: User = Depends(get_current_user)):
+    db_manga = get_manga(db, manga_id=_manga_vote.manga_id)
+    # print(db_manga.voter[0].username)
+    if not db_manga:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="데이터를 찾을수 없습니다.")
+    vote_manga(db=db, db_manga=db_manga, db_user=current_user)

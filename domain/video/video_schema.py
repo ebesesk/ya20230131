@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import Union, Optional
 from datetime import date
 from typing import List
+from ..users.users_schema import User
 
 class Video_dbids(BaseModel):
     dbid: str
@@ -123,6 +124,7 @@ class Video_info(BaseModel):
     date_posted: date | None = None
     date_modified: date | None = None
     
+    voter: list[User] = []
 
     class Config:
         orm_mode = True
@@ -130,6 +132,11 @@ class Video_info(BaseModel):
 class Video_info_list(BaseModel):
     total: int
     video_list: list[Video_info] = []
-    
+
+
+class VideoVote(BaseModel):
+    video_id: int
+
+
 # class VideoItems(BaseModel):
 #     Video_list: list[VideoItem] = []

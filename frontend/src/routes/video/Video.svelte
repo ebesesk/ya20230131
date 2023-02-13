@@ -45,7 +45,25 @@
       kw = $keyword
     })
   }
+
+  function vote_video(_video_id) {
+    if(window.confirm('정말로 추천하시겠습니가?')) {
+      let url = "/api/video/vote"
+      let params = {
+        video_id: _video_id
+      }
+      fastapi('post', url, params,
+        (json) => {
+          search_video()
+        },
+        (err_json) => {
+          error = err_json
+        }
+      )
+    }
+  }
   
+
   $: total_page = Math.ceil(total/size)    
   $: $page, $keyword, search_video()
   
@@ -89,6 +107,8 @@
   </ul>
   <!-- 페이징처리 끝 -->
 
+
+
   <div class="row" style="float: none; margin:100 auto;">
     {#each video_list as video}
     <div class="col-xxl-3 col-xl-4 col-lg-4 col-sm-6" style="object-fit: scale-down;">
@@ -100,17 +120,30 @@
             'gif/' + video.dbid.substring(video.dbid.indexOf('/')+1, video.dbid.lastIndexOf('.')) + ".gif")  
           }' 
             alt="" class="img-thumbnail img-responsive">
-        
-        <br><button class="btn btn-sm" on:click={open_videoInfo_modal(video)}>modal</button>
+          <br>
+        <!-- 추천 -->
+        {#if video.voter.length > 0}
+          <button class="btn btn-sm btn-light" on:click="{vote_video(video.id)}">
+            <sapn class="badge rounded-pill bg-danger">{video.voter.length}</sapn>
+          </button>
+        {:else}
+        <button class="btn btn-sm btn-light" on:click="{vote_video(video.id)}">
+          추천
+        </button>
+        {/if}
+
+        <button class="btn btn-sm" on:click={open_videoInfo_modal(video)}>modal</button>
         <a href="{'kddddds://http://' + video.dbid}" 
           class="caption display-7" 
           style="font-size:smaller; white-space: normal; word-break: break-all;">
-              # {video.dbid.substr(0,20)} # {video.etc}
-              # {video.width}x{video.height} 
-              # {parseInt(video.showtime/60)}분{video.showtime%60}초
-              # {parseInt(video.bitrate/1000)}kbps # {parseInt(video.filesize/1000000)}MB
-              <!-- # 수정 날자: {video.date_modified}  # 작성 날자: {video.date_posted}  # cdate: {video.cdate}<br> -->
+              # {video.dbid.substr(0,20)} 
         </a>
+        <sapn class="video-info">
+          # {video.etc} # {video.width}x{video.height} 
+          # {parseInt(video.showtime/60)}분{video.showtime%60}초
+          # {parseInt(video.bitrate/1000)}kbps # {parseInt(video.filesize/1000000)}MB
+          <!-- # 수정 날자: {video.date_modified}  # 작성 날자: {video.date_posted}  # cdate: {video.cdate}<br> -->
+        </sapn>
       </div>
     </div>
     {/each}
@@ -214,4 +247,18 @@
 .img-thumbnail.img-responsive {
   object-fit: scale-down;
 }
+.video-info {
+  font-size: smaller;
+  line-height: 1;
+}
+a {
+  line-height: 1;
+}
+.btn-sm.btn-light {
+  font-size: smaller;
+}
+.badge {
+  font-size: smaller;
+}
+
 </style>

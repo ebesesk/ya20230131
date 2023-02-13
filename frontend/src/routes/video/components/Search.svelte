@@ -385,10 +385,22 @@
       <b class="text-danger">{"♥".repeat(video.star)}</b> 
   </div>
 </div>
-<div style="font-size: smaller;">
-  <label style="font-size: smaller;">
-  <br>ect: <input type="text" bind:value={video.etc}><br>
-</label>
+<br>
+<div class="row" style="font-size: smaller;">
+
+  <div class="col" style="font-size: smaller;">
+    <label>
+      ect: <input type="text" bind:value={video.etc}><br>
+    </label>
+  </div>
+
+  <div class="col vote">
+    <label>
+      <input type="radio" name='vote' bind:group={video.vote} value={true}>vote 
+    </label>
+    <button on:click={() => {video.vote = none}} style="font-size: smaller;">clear</button>
+  </div>
+
 </div>
 
 
@@ -399,6 +411,9 @@
  
 
 <style>
+  span {
+    text-align: end;
+  }
   .row {
     display: flex;
   }

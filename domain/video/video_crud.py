@@ -2,11 +2,14 @@ import datetime
 import sqlalchemy
 from sqlalchemy import or_, and_, not_
 from sqlalchemy.orm import Session
-from models import Video
+from models import Video, User, video_voter
 from . import video_schema
 
+def join_Video_voter(db: Session):
+    return db.query(Video).join(video_voter).all()
+
 def get_video_id(db:Session, video_id:int):
-    return db.query(Video).filter(Video.id == video_id).first()
+    return db.query(Video).get(video_id)
 
 def get_all_videos(db: Session):
     # print(db.query(Video).all())
@@ -36,12 +39,15 @@ def create_new_video(db: Session, _video: video_schema.Video_create):
     
 def get_video_list(db: Session, skip:int=0, limit:int=0, keyword:str=""):
     _video_list = db.query(Video).filter(
-        or_(Video.dbid.like("%"+keyword+"%"), Video.etc.like("%"+keyword+"%"))
+        or_(Video.dbid.ilike("%"+keyword+"%"), Video.etc.ilike("%"+keyword+"%"))
         ).order_by(Video.date_posted.desc())
     total = _video_list.count()
     video_list = _video_list.offset(skip).limit(limit).all()
     return total, video_list
     
+def vote_video(db: Session, db_video: Video, db_user:User):
+    db_video.voter.append(db_user)
+    db.commit()
 
 def search_video(db: Session, keyword, skip:int=0, limit:int=0):
     # print(keyword)
@@ -146,21 +152,23 @@ def search_video(db: Session, keyword, skip:int=0, limit:int=0):
                         # keyword[_key].remove('not')
                         for value in keyword[_key][:i]:
                             print(value)
+                            search = '%{}%'.format(value)
                             _q.append(
-                                or_(Video.etc.like('%{}%'.format(value)), Video.dbid.like('%{}%'.format(value)))
+                                or_(Video.etc.ilike(search), Video.dbid.ilike(search))
                             )
                         for value in keyword[_key][i+1:]:
+                            search = '%{}%'.format(value)
                             _q.append(
-                                not_(or_(Video.etc.like('%{}%'.format(value)), Video.dbid.like('%{}%'.format(value))))
+                                not_(or_(Video.etc.ilike(search), Video.dbid.ilike(search))) 
                             )
                     else:
                         for value in keyword[_key]:
-                            print(value)
+                            # print(value, 'else')
+                            search = '%{}%'.format(value)
                             _q.append(
-                                or_(Video.etc.like('%{}%'.format(value)), Video.dbid.like('%{}%'.format(value)))
+                                or_(Video.etc.ilike(search), Video.dbid.ilike(search))
                             )
-                    print(_q[0])
-                    _q.append(Video.etc == None)
+                    # _q.append(Video.etc == None)
                     q.append(and_(*_q))
 
 
@@ -192,6 +200,8 @@ def search_video(db: Session, keyword, skip:int=0, limit:int=0):
             
             
         elif type(keyword[_key]) == bool:
+            
+            
             if _key == 'school_uniform':
                 if keyword[_key] == True:
                     q.append(Video.school_uniform == True)
@@ -204,6 +214,8 @@ def search_video(db: Session, keyword, skip:int=0, limit:int=0):
                     q.append(Video.hip == True)
                 elif keyword[_key] == False:
                     q.append(Video.hip != True)
+            
+            
             
             
             if _key == 'group':
@@ -276,8 +288,10 @@ def search_video(db: Session, keyword, skip:int=0, limit:int=0):
                     q.append(Video.family != True)
             
     
-    
-    _video_list = db.query(Video).filter(and_(*q)).order_by(Video.date_posted.desc())
+    if 'vote' in keyword and keyword['vote']:
+        _video_list = db.query(Video).filter(and_(*q)).join(video_voter).order_by(Video.date_posted.desc())
+    else:
+        _video_list = db.query(Video).filter(and_(*q)).order_by(Video.date_posted.desc())
     total = _video_list.count()
     video_list = _video_list.offset(skip).limit(limit).all()
     print(total)
