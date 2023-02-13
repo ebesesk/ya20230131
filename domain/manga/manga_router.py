@@ -8,7 +8,9 @@ from database import get_db
 
 from ..login.login_router import get_current_user
 from . import manga_schema
-from .manga_crud import bulk_insert_mangas, get_all_mangas, delete_db_list, get_manga_list, delete_id, vote_manga, get_manga
+from .manga_crud import (bulk_insert_mangas, get_all_mangas, delete_db_list, 
+                         get_manga_list, delete_id, vote_manga, get_manga,
+                         search_manga)
 from . import manga_util
 from models import Manga, User
 
@@ -76,3 +78,34 @@ def manga_vote(_manga_vote: manga_schema.MangaVote,
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="데이터를 찾을수 없습니다.")
     vote_manga(db=db, db_manga=db_manga, db_user=current_user)
+    
+@router.get("/search")
+def manga_search(db: Session = Depends(get_db),
+                 page: int = 0,
+                 size: int = 10,
+                 keyword: str = '',
+                 vote: bool = False):
+        
+    total, _manga_list = search_manga(db=db,
+                                      skip=page*size, 
+                                      limit=size, 
+                                      keyword=keyword.strip(), 
+                                      vote=vote)
+    manga_list = []
+    for manga in _manga_list:
+        images = manga_util.get_images(manga.title)
+        if images:
+            manga_list.append({
+                    'id': manga.id,
+                    'title': manga.title,
+                    'tag': manga.tag,
+                    'created_date': manga.created_date,
+                    'voter': manga.voter, 
+                    'images': images
+            })
+        else:
+            delete_id(db, manga.id)
+    return {
+        'total': total,
+        'manga_list': manga_list
+    }

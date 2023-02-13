@@ -407,7 +407,7 @@
 
 <br>
 <button on:click={all_select} style="font-size: smaller; text-align: right;"><b>모두선택</b></button>
-<button on:click={on_search} style="font-size: smaller; text-align: right;"><b>등록</b></button>
+<button on:click={on_search} style="font-size: smaller; text-align: right;"><b>검색</b></button>
  
 
 <style>

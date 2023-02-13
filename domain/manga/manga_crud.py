@@ -1,8 +1,9 @@
 from datetime import datetime
 from sqlalchemy.orm import Session
 from typing import List
+from sqlalchemy import or_, and_, not_
 
-from models import Manga, User
+from models import Manga, User, manga_voter
 
 from . import manga_schema
 
@@ -43,3 +44,19 @@ def delete_id(db:Session, _id):
 def vote_manga(db: Session, db_manga: Manga, db_user: User):
     db_manga.voter.append(db_user)
     db.commit()
+    
+def search_manga(db:Session, skip:int=0, limit:int=0, keyword:str='', vote:bool=False):
+    search = f'%{keyword}%'
+    if vote:
+        _manga_list = db.query(Manga).filter(
+            Manga.title.ilike(search) |
+            Manga.tag.ilike(search)
+        ).join(manga_voter)
+    else:
+        _manga_list = db.query(Manga).filter(
+                Manga.title.ilike(search) |
+                Manga.tag.ilike(search)
+        )
+    manga_list = _manga_list.order_by(Manga.created_date.desc()).offset(skip).limit(limit).all()
+    total = _manga_list.count()
+    return total, manga_list

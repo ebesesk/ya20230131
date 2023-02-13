@@ -48,7 +48,7 @@
 </script>
 
 {#if shown}
-<div class="modal-wrapper">
+<div class="modal-wrapper" >
   <div 
     class="" 
     style="position: absolute;
