@@ -159,7 +159,7 @@ def search_video(db: Session, keyword, skip:int=0, limit:int=0):
                         for value in keyword[_key][i+1:]:
                             search = '%{}%'.format(value)
                             _q.append(
-                                not_(or_(Video.etc.ilike(search), Video.dbid.ilike(search))) 
+                                or_(not_(Video.etc.ilike(search)), not_(Video.dbid.ilike(search)))
                             )
                     else:
                         for value in keyword[_key]:

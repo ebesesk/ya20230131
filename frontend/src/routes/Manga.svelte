@@ -4,7 +4,7 @@
   import { page } from "../lib/store"
   
   let manga_list = []
-  let size = 24
+  let size = 18
   let total = 0
   $: total_page = Math.ceil(total/size)    
   
