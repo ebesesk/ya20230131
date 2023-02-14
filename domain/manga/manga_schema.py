@@ -3,6 +3,17 @@ from pydantic import BaseModel, validator, EmailStr
 from typing import List, Optional
 from ..users.users_schema import User
 
+
+class Manga_db(BaseModel):
+    id: int
+    title: str
+    tag: str | None = None
+    created_date: datetime.datetime | None = None
+    voter: List[User] = []
+    page: int
+    class Config:
+        orm_mode = True
+
 class Manga(BaseModel):
     id: int
     title: str

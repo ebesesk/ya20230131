@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher, onDestroy } from 'svelte';
+  // import { clickOutside } from '../lib/clickOutside';
   const handle_keydown = e => {
     if (e.key === 'Escape') {
       close();
@@ -48,7 +49,7 @@
 </script>
 
 {#if shown}
-<div class="modal-wrapper" >
+<div class="modal-wrapper">
   <div 
     class="" 
     style="position: absolute;
@@ -67,6 +68,7 @@
     <slot />
   </div>
 </div>
+
 {/if}
 
 

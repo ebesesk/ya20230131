@@ -32,3 +32,10 @@ def get_db():
         yield db
     finally:
         db.close()
+
+async def get_async_db():
+    db = AsyncSession(bind=async_engine)
+    try:
+        yield db
+    finally:
+        await db.close()

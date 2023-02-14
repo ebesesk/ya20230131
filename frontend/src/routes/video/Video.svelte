@@ -2,6 +2,7 @@
 
   import fastapi from "../../lib/api";
   import { page, keyword } from "../../lib/store"
+  import { clickOutside } from "../../lib/clickOutside";
   
   import Modal from "../../components/Modal.svelte";
   import VideoInfo from "./components/VideoInfo.svelte" 
@@ -10,34 +11,27 @@
   
   
   let video_list = []
-  let video
-  let size = 20
+  let size = 16
   let total = 0
   let kw
   let modal_scanfiles
   let modal_videoInfo
   let modal_search
-  let video_id
-  // let videoinfo_modal = true
+  let videoInfo   // modal_videoInfo props
   
   
   function open_videoInfo_modal(video) {
-    video_id = video.id
+    videoInfo = video
     modal_videoInfo.show()
   }
   
   
   function search_video() {
-    let video_json = JSON.stringify(video)
-    console.log(video_json)
-    console.log($keyword)
     let params = {
       page: $page,
       size: size,
       keyword: $keyword
     }
-    
-    
     fastapi('get', '/api/video/search', params, (json) => {
       console.log(json.video_list)
       video_list = json.video_list
@@ -46,23 +40,34 @@
     })
   }
 
-  function vote_video(_video_id) {
-    if(window.confirm('정말로 추천하시겠습니가?')) {
-      let url = "/api/video/vote"
-      let params = {
-        video_id: _video_id
-      }
-      fastapi('post', url, params,
-        (json) => {
-          search_video()
-        },
-        (err_json) => {
-          error = err_json
-        }
-      )
+  function voteVideo(_video_id) {
+    let url = "/api/video/vote"
+    let params = {
+      video_id: _video_id
     }
+    fastapi('post', url, params,
+      (json) => {
+        search_video()
+      },
+      (err_json) => {
+        error = err_json
+      }
+    )
   }
-  
+  function delVote(_video_id) {
+    let url = "/api/video/delvote"
+    let params = {
+      video_id: _video_id,
+    }
+    fastapi('delete', url, params,
+      (json) => {
+        search_video()
+      },
+      (err_json) => {
+        error = err_json
+      }
+    )
+  }
 
   $: total_page = Math.ceil(total/size)    
   $: $page, $keyword, search_video()
@@ -75,9 +80,9 @@
 
 
 
-<div class="container my-2 " style="width: 100%; height: 100%; ">
+<div class="container-xxl my-2">
 
-  <div class="button-group">
+  <div class="header-button">
     <button class="button" on:click={modal_scanfiles.show()}>ScanFiles</button>
     <button class="button" on:click={modal_search.show()}>검색</button>
   </div>
@@ -111,7 +116,7 @@
 
   <div class="row" style="float: none; margin:100 auto;">
     {#each video_list as video}
-    <div class="col-xxl-3 col-xl-4 col-lg-4 col-sm-6" style="object-fit: scale-down;">
+    <div class="col-xxl-2 col-xl-3 col-lg-4 col-sm-6" style="object-fit: scale-down;">
       <div class="img-container" style="text-align: center;">
         <img 
           src='{
@@ -123,16 +128,16 @@
           <br>
         <!-- 추천 -->
         {#if video.voter.length > 0}
-          <button class="btn btn-sm btn-light" on:click="{vote_video(video.id)}">
+          <button class="btn btn-sm btn-light" on:click="{delVote(video.id)}">
             <sapn class="badge rounded-pill bg-danger">{video.voter.length}</sapn>
           </button>
         {:else}
-        <button class="btn btn-sm btn-light" on:click="{vote_video(video.id)}">
+        <button class="btn btn-sm btn-light" on:click="{voteVideo(video.id)}">
           추천
         </button>
         {/if}
 
-        <button class="btn btn-sm" on:click={open_videoInfo_modal(video)}>modal</button>
+        <button class="btn btn-sm light" on:click={open_videoInfo_modal(video)}>modal</button>
         <a href="{'kddddds://http://' + video.dbid}" 
           class="caption display-7" 
           style="font-size:smaller; white-space: normal; word-break: break-all;">
@@ -184,7 +189,7 @@
 <!-- 모달 -->
 <Modal bind:this={modal_videoInfo}>
 <!-- Modal content -->
-  <VideoInfo  video_id = {video_id}/>
+  <VideoInfo videoInfo={videoInfo}/>
   <button on:click={modal_videoInfo.hide()} style="font-size: smaller;">Close</button>
 </Modal>
 
@@ -210,9 +215,17 @@
   color: black;
 }
 .img-thumbnail {
-  height: 250px;
+  height: 200px;
   text-align: center;
 }
+.header-button {
+      display: flex;
+      justify-content: flex-end;
+      font-size: smaller;
+      /* line-height: 100%; */
+      align-items: center;
+
+    }
 .button-group {
   /* display: inline-flex; */
   text-align: end;

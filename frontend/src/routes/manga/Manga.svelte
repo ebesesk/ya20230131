@@ -11,6 +11,7 @@
   let modal_search
   let searchValue = ''
   let vote = false
+  let little = false
   
   
   $: total_page = Math.ceil(total/size)    
@@ -24,50 +25,75 @@
   }
   
   
-  function vote_manga(_manga_id) {
+  function voteManga(_manga_id) {
     let url = "/api/manga/vote"
     let params = {
       manga_id: _manga_id
     }
     fastapi('post', url, params,
-    (json) => {
-      search()
-    },
-    (err_json) => {
-      error = err_json
-    }
+      (json) => {
+        search()
+      },
+      (err_json) => {
+        error = err_json
+      }
     )
   }
-    
   
-  function onVote () {
-    vote = true
-    search()
+  function delVoteManga(_manga_id) {
+    let url = "/api/manga/delvote"
+    let params = {
+      manga_id: _manga_id
+    }
+    fastapi('delete', url, params,
+      (json) => {
+        search()
+      },
+      (error_json) => {
+
+      }
+    )
   }
   
-    
+  
+  
   function search() {
     let params = {
-      page: $mangaPage,
       size: size,
+      vote: vote,
+      little: little,
+      page: $mangaPage,
       keyword: $mangaKeyword,
-      vote: vote
     }
     fastapi('get', '/api/manga/search', params, (json) => {
       manga_list = json.manga_list
       total = json.total
-      console.log(total)
+
     })
   }
   
   
   function onSearch () {
-    vote = false
+    vote = vote
+    little = little
     $mangaPage = 0
     $mangaKeyword = searchValue
-    console.log('$mangaPage: ',$mangaPage, 'mangaKeyword: ', $mangaKeyword)
   }
-  
+  function onVote () {
+    little = false
+    vote = true
+    $mangaPage = 0
+    $mangaKeyword = ''
+    search()
+  }
+  function onLittle () {
+    little = true
+    vote = false
+    $mangaPage = 0
+    $mangaKeyword = ''
+    search()
+  }
+
   function closemodal() {
     modal_search.hide()
   }
@@ -87,20 +113,28 @@
 
 </script>
 
-<div >
+<div class="container-xxl">
   <div class="header-button">
     <button on:click={refresh} class="button refresh">refresh</button>
     <button class="btn btn-sm" on:click={modal_search.show()}>modal show</button>
-    
+    <!-- 페이지 적은 -->
+    <button class="btn btn-sm" on:click={onLittle}>little</button>
     <!-- 추천보기 -->
     <button class="btn btn-sm" on:click={onVote}>추천보기</button>
-    <!-- 검색 -->
+    
     <form on:submit|preventDefault={onSearch}>
+      <label>
+        <input type="checkbox" bind:checked={little}>little
+      </label>
+      <label>
+        <input type="checkbox" bind:checked={vote}>추천
+      </label>
+    <!-- 검색 -->
       <input type="text" bind:value={searchValue} placeholder="검색"/>
       <button on:click={onsearch}>검색</button>
     </form>
-    
   </div>
+  
   <div class="container my-2 " style="width: 100%; height: 100%; ">
     <!-- 페이징처리 시작 -->
     <ul class="pagination justify-content-center" style="font-size: smaller;">
@@ -125,79 +159,29 @@
     <!-- 페이징처리 끝 -->
   </div>
 
-
-  <!-- <div class="row" style="float: none; margin:100 auto;">
+  <div class="row" >
     {#each manga_list as manga, i}
-    <div class="col-xxl-4 col-xl-4 col-lg-4 col-sm-6">
-      
-      <div id="manga{i}" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-          {#each manga['images'].slice(0,20) as image}
-          <div class="carousel-item active">
-            <img src="{encodeURIComponent(image)}" class="d-block w-100" alt="...">
-          </div>
-          {/each}
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#manga{i}" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#manga{i}" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
-      </div> -->
-
-
-      <!-- 추천게시물 -->
-      <!-- {#if manga.voter.length > 0}
-      <button class="btn btn-sm btn-outline-secondary" on:click={vote_manga(manga['id'])}>
-        <span class="badge rounded-pill bg-danger">{manga.voter.length}</span>
-      </button>
-      {:else}
-      <button class="btn btn-sm btn-outline-secondary" on:click={vote_manga(manga['id'])}>
-        추천
-      </button>
-      {/if}
-      <a href="{'kddddds2://http://' + manga.title}" class="caption display-7" 
-                style="font-size:smaller; white-space: normal; word-break: break-all;">
-                # {manga.title}</a>
-      <span class="description">#{manga['images'].length}P</span>
-    </div>
-    {/each}
-  </div> -->
-
-
-
-
-
-
-  <div class="row" style="float: none; margin:100 auto;">
-    {#each manga_list as manga, i}
-    <div class="col-xxl-2 col-xl-3 col-lg-4 col-sm-6">
+    <div class="col-xxl-1 col-xl-2 col-lg-3 col-sm-6">
       <div class="img-container">
         <img src="{encodeURIComponent(manga['images'][0])}" 
-          alt="{manga['title']}" class="img-thumbnail img-responsive" 
-          style="object-fit: scale-down;">
+          alt="{manga['title']}" class="img-thumbnail" />
+
           <div class="overlay">
+            <p class="description">
             <!-- 추천게시물 -->
             {#if manga.voter.length > 0}
-            <button class="btn btn-sm btn-outline-secondary" on:click={vote_manga(manga['id'])}>
+            <button class="btn btn-sm btn-outline-secondary" on:click={delVoteManga(manga['id'])}>
               <span class="badge rounded-pill bg-danger">{manga.voter.length}</span>
             </button>
             {:else}
-            <button class="btn btn-sm btn-outline-secondary" on:click={vote_manga(manga['id'])}>
+            <button class="btn btn-sm btn-outline-secondary" on:click={voteManga(manga['id'])}>
               추천
             </button>
             {/if}
-
-
-            
-            
-            <a href="{'kddddds2://http://' + manga.title}" class="caption display-7" 
-              style="font-size:smaller; white-space: normal; word-break: break-all;">
-              {manga.title}</a>
-              <span class="description">#{manga['images'].length}P</span>
+              <a href="{'kddddds2://http://' + manga.title}" class="caption display-7" 
+                style="font-size:smaller; white-space: normal; word-break: break-all;">
+                보기 #{manga['images'].length}</a> {manga.title}
+            </p>
           </div>
       </div>
     </div>
@@ -232,16 +216,27 @@
   </div>
 </div>
 
-
+                                                                                        
 <Modal bind:this={modal_search}>
 
   <button on:click={modal_search.hide()} style="font-size: smaller;">Close</button>
 </Modal>
 
 <style>
+    .img-container > img {
+      top:0;
+      left: 0;
+      min-width: 100%;
+      height: 250px;
+      object-fit: scale-down;
+    }
     .header-button {
       display: flex;
       justify-content: flex-end;
+      font-size: smaller;
+      /* line-height: 100%; */
+      align-items: center;
+
     }
 
     .menu.title {
@@ -261,12 +256,18 @@
         height: 600px;
         object-fit: scale-down;
     }
-    .description {
-        font-size: smaller;
-    }
     .btn.btn-sm.btn-outline-secondary {
-        font-size: smaller;
-        outline: none;
-        border: none;
+      font-size: smaller;
+      outline: none;
+      border: none;
+    }
+    .overlay {
+      font-size: smaller;
+      /* white-space: nowrap; */
+    }
+    p.description {
+      /* display: flex;   */
+      font-size: smaller;
+      line-height: 1.3;
     }
 </style>

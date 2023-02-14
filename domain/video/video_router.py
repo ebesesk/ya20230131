@@ -5,13 +5,15 @@ from pathlib import Path
 import json
 
 from database import get_db
-from .video_crud import get_all_videos, get_video_list, get_video_id, input_videoinfo, del_dbid, search_video, vote_video
+from .video_crud import (get_all_videos, get_video_list, get_video_id, 
+                         input_videoinfo, del_dbid, search_video, 
+                         vote_video, delete_vote)
 from .video_schema import Video_info, Video_info_list, Video_update, Video_dbids, VideoVote
 # from models import Video
 # from db.repository.users import create_new_user
 from . import video_util
 from config import settings
-from .stream_mp4 import range_requests_response
+# from .stream_mp4 import range_requests_response
 from ..login.login_router import get_current_user
 from models import User
 
@@ -82,7 +84,7 @@ def get_search(db: Session=Depends(get_db),
     for k in keyword_copy:
         if type(keyword[k]) == list and len(keyword[k]) == 0 :
             del keyword[k]
-    print(keyword)
+    # print(keyword)
     total, video_list = search_video(db=db, keyword = keyword, skip=page*size, limit=size)
     # total, video_list = search_video(db=db, keyword = keyword, skip=page*size, limit=size)
     return {
@@ -99,6 +101,20 @@ def video_vote(_video_vote: VideoVote,
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="데이터를 찾을수 없습니다.")
     vote_video(db=db, db_video=db_video, db_user=current_user)
+
+@router.delete("/delvote", status_code=status.HTTP_204_NO_CONTENT)
+def video_delete_voted(_video_vote: VideoVote,
+                       db: Session = Depends(get_db),
+                       current_user: User = Depends(get_current_user)):
+    db_video = get_video_id(db = db,
+                            video_id = _video_vote.video_id)
+    if not db_video:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail = "데이터를 찾을수 없습니다.")
+    delete_vote(db = db, 
+                db_video = db_video, 
+                db_user = current_user)
+        
 
 
 # @router.get("/all", response_model=list[Video_info])

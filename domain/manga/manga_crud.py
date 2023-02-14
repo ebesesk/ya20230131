@@ -28,7 +28,7 @@ def bulk_insert_mangas(db: Session, mangas:List[manga_schema.Manga]):
 def get_all_mangas(db: Session):
     return db.query(Manga).all()
 
-def bulk_update_mangas(db:Session, mangas:List[manga_schema.Manga]):
+def bulk_update_mangas(db:Session, mangas:List[manga_schema.Manga_db]):
     db.bulk_update_mappings(Manga, mangas)
 
 def delete_db_list(db:Session, mangas:List[Manga]):
@@ -45,18 +45,35 @@ def vote_manga(db: Session, db_manga: Manga, db_user: User):
     db_manga.voter.append(db_user)
     db.commit()
     
-def search_manga(db:Session, skip:int=0, limit:int=0, keyword:str='', vote:bool=False):
+def del_voted_manga(db: Session, db_manga: Manga, db_user: User):
+    db_manga.voter.remove(db_user)
+    db.commit()
+    
+def search_manga(db: Session, 
+                 skip: int = 0, 
+                 limit: int = 0, 
+                 keyword: str = '', 
+                 vote: bool = False,
+                 little: bool = False):
+
     search = f'%{keyword}%'
-    if vote:
-        _manga_list = db.query(Manga).filter(
-            Manga.title.ilike(search) |
-            Manga.tag.ilike(search)
-        ).join(manga_voter)
+    if keyword == '':
+        _manga_list = db.query(Manga)
     else:
         _manga_list = db.query(Manga).filter(
-                Manga.title.ilike(search) |
-                Manga.tag.ilike(search)
-        )
-    manga_list = _manga_list.order_by(Manga.created_date.desc()).offset(skip).limit(limit).all()
+                        Manga.title.ilike(search) | Manga.tag.ilike(search)
+                      )
+
+    if vote == True:
+        _manga_list = _manga_list.join(manga_voter)
+    else:
+        _manga_list = _manga_list
+
+    if little == True:
+        _manga_list = _manga_list.filter(Manga.page < 7)
+    else:
+        _manga_list = _manga_list.filter(Manga.page > 7)
+
     total = _manga_list.count()
+    manga_list = _manga_list.order_by(Manga.created_date.desc()).offset(skip).limit(limit).all()
     return total, manga_list

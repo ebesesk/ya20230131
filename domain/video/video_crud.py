@@ -48,6 +48,10 @@ def get_video_list(db: Session, skip:int=0, limit:int=0, keyword:str=""):
 def vote_video(db: Session, db_video: Video, db_user:User):
     db_video.voter.append(db_user)
     db.commit()
+    
+def delete_vote(db:Session, db_video: Video, db_user:User):
+    db_video.voter.remove(db_user)
+    db.commit()
 
 def search_video(db: Session, keyword, skip:int=0, limit:int=0):
     # print(keyword)
