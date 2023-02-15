@@ -10,6 +10,23 @@ class Video_dbids(BaseModel):
     class Config:
         orm_mode = True
     
+class Scanreturn(BaseModel):
+    OverflowError: list[str] = []
+    NotImplementedError: list[str] = []
+    FileNotFoundError: list[str] = []
+    알수없는에러: list[str] = []
+    db_추가: list[str] = []
+    converted: list[str] = []
+    make_gif: list[str] = []
+    make_webp: list[str] = []
+    delete_gif: list[str] = []
+    delete_webp: list[str] = []
+    delete_dbids: list[str] = []
+    detect_files: list[str] = []
+
+class Addfiles(BaseModel):
+    detect_files: list[str]
+
 
 class Video_update(BaseModel):
     id: int

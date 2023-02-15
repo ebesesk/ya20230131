@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher, onDestroy } from 'svelte';
-  // import { clickOutside } from '../lib/clickOutside';
+  import { clickOutside } from '../lib/clickOutside';
   const handle_keydown = e => {
     if (e.key === 'Escape') {
       close();
@@ -64,7 +64,7 @@
            border-radius: 0.2em;
            background: white;"
   >
-    <span class="close" on:click={() => hide()}>&times;</span>
+    <span class="close" on:click={hide}>&times;</span>
     <slot />
   </div>
 </div>

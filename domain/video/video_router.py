@@ -8,7 +8,8 @@ from database import get_db
 from .video_crud import (get_all_videos, get_video_list, get_video_id, 
                          input_videoinfo, del_dbid, search_video, 
                          vote_video, delete_vote)
-from .video_schema import Video_info, Video_info_list, Video_update, Video_dbids, VideoVote
+from .video_schema import (Video_info, Video_info_list, Video_update, 
+                           Video_dbids, VideoVote, Scanreturn)
 # from models import Video
 # from db.repository.users import create_new_user
 from . import video_util
@@ -59,13 +60,21 @@ def input_modified_videoinfo(_video_info: Video_update, db:Session=Depends(get_d
 
 
 # Scanfiles.svelte
-@router.get("/scan_files")#, response_model=list[Video_dbids])
-def view_scanned_files(db: Session=Depends(get_db)):
+@router.get("/scan_files", response_model=Scanreturn)
+def file_scan(db: Session=Depends(get_db)):
+    # video_util.scan_files(db)
     return video_util.scan_files(db)
 
-@router.get("/add_dbids")
-def add_files_to_dbids(db: Session=Depends(get_db)):
-    return video_util.add_dbids(db)
+
+
+
+
+# @router.post("/add_dbids")
+# def add_files_to_dbids(db: Session=Depends(get_db),
+#                        detect_files: Addfiles=[]):
+#     print(detect_files)
+#     # video_util.add_dbids(db, detect_files)
+#     # return video_util.add_dbids(db)
 
 
 
@@ -143,3 +152,13 @@ def get_video(request: Request, dbid: str):
     return range_requests_response(request, file_path=video_path, content_type="video/mp4")
 
 
+'''
+['/home/video/yadong/20230214/video_2.ts',
+ '/home/video/yadong/20230214/Twenty five Japanese women sucking and fucking in one room - IN3X.NET.ts',
+ '/home/video/yadong/20230214/MUSUME-122922_01 The year-end party after a long time i_2.ts',
+ '/home/video/yadong/20230214/FC2-PPV-1728678 [No appearance] play busty shaved activ.ts',
+ '/home/video/yadong/20230214/JAV Hardcore Orgy Sex - 야동코리아.ts',
+ '/home/video/yadong/20230214/엉덩이에 눈이 [2분 22초] - 한국야동 - 야동 무료야동 - 야팡.ts',
+ '/home/video/yadong/20230214/FC2-PPV-3177333 980pt until 2_7 [Twice creampie] almost.ts',]
+
+'''

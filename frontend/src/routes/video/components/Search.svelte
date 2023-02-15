@@ -2,23 +2,7 @@
   import fastapi from "../../../lib/api";
   import { page, keyword } from "../../../lib/store"
 
-  let kw = 'test2'
-  let size = 20
   let none
-
-  function get_videos_list() {
-    let params = {
-      page: $page,
-      size: size,
-      keyword: $keyword,
-    }
-    fastapi('get', '/api/video/list', params, (json) => {
-      // console.log(json)
-      video_list = json.video_list
-      total = json.total
-      kw = $keyword
-    })
-  }
   
   export let video = {
     resolution: [],

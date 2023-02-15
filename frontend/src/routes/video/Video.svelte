@@ -8,15 +8,15 @@
   import VideoInfo from "./components/VideoInfo.svelte" 
   import ScanFiles from "./components/Scanfiles.svelte"
   import Search from "./components/Search.svelte";
-  
+  import Post from "./components/Post.svelte";
   
   let video_list = []
   let size = 16
   let total = 0
-  let kw
   let modal_scanfiles
   let modal_videoInfo
   let modal_search
+  let modal_post
   let videoInfo   // modal_videoInfo props
   
   
@@ -36,7 +36,6 @@
       console.log(json.video_list)
       video_list = json.video_list
       total = json.total
-      kw = $keyword
     })
   }
 
@@ -80,10 +79,11 @@
 
 
 
-<div class="container-xxl my-2">
+<div class="container-xxl my-2"  >
 
   <div class="header-button">
     <button class="button" on:click={modal_scanfiles.show()}>ScanFiles</button>
+    <button class="button" on:click={modal_post.show()}>POST</button>
     <button class="button" on:click={modal_search.show()}>검색</button>
   </div>
 
@@ -204,6 +204,15 @@
   <Search />
   <button on:click={modal_search.hide()} style="font-size: smaller; text-align: right;">Close</button>
 </Modal>
+
+<Modal bind:this={modal_post}>
+  <!-- Modal content -->
+  <Post />
+  <button on:click={modal_post.hide()} style="font-size: smaller; text-align: right;">Close</button>
+</Modal>
+
+
+
 <!-- 모달끝 -->
 
 
