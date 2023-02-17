@@ -53,243 +53,483 @@ def delete_vote(db:Session, db_video: Video, db_user:User):
     db_video.voter.remove(db_user)
     db.commit()
 
+# def search_video(db: Session, keyword, skip:int=0, limit:int=0):
+#     # print(keyword)
+#     q = []
+#     j = 0
+#     for _key in keyword:
+#         j = j + 1
+#         if type(keyword[_key]) == list:
+#             if _key == 'resolution':
+#                 if len(keyword[_key]) > 0:
+#                     _q = []
+#                     for value in keyword[_key]:
+#                         if value == 'high':
+#                             _q.append((Video.width * Video.height) >= 786432)
+#                         elif value == 'middle':
+#                             _q.append(and_(((Video.width * Video.height) < 786432), ((Video.width * Video.height) > 307200)))
+#                         elif value == 'low':
+#                             _q.append((Video.width * Video.height) <= 307200)
+#                         else:
+#                             continue
+#                     if 'not' not in keyword[_key]:
+#                         q.append(or_(*_q))
+#                     else:
+#                         q.append(not_(or_(*_q)))
+
+
+#             elif _key == 'display_quality':
+#                 if len(keyword[_key]) > 0:
+#                     _q = []
+#                     for value in keyword[_key]:
+#                         _q.append(Video.display_quality == value)
+#                     if 'not' not in keyword[_key]:
+#                         q.append(or_(*_q))
+#                     else:
+#                         q.append(not_(or_(*_q)))
+
+  
+#             elif _key == 'country':
+#                 if len(keyword[_key]) > 0:
+#                     _q = []
+#                     for value in keyword[_key]:
+#                         _q.append(Video.country == value)
+#                     if 'not' not in keyword[_key]:
+#                         q.append(or_(*_q))
+#                     else:
+#                         q.append(not_(or_(*_q)))
+                        
+
+#             elif _key == 'face':
+#                 if len(keyword[_key]) > 0:
+#                     # print(j, _key, 'list')
+#                     _q = []
+#                     for value in keyword[_key]:
+#                         _q.append(Video.face == value)
+#                     if 'not' not in keyword[_key]:
+#                         q.append(or_(*_q))
+#                     else:
+#                         q.append(not_(or_(*_q)))
+
+
+#             elif _key == 'look':
+#                 if len(keyword[_key]) > 0:
+#                     # print(j, _key, 'list')
+#                     _q = []
+#                     for value in keyword[_key]:
+#                         _q.append(Video.look == value)
+#                     if 'not' not in keyword[_key]:
+#                         q.append(or_(*_q))
+#                     else:
+#                         q.append(not_(or_(*_q)))
+
+
+#             elif _key == 'age':
+#                 if len(keyword[_key]) > 0:
+#                     # print(j, _key, 'list')
+#                     _q = []
+#                     for value in keyword[_key]:
+#                         _q.append(Video.age == value)
+#                     if 'not' not in keyword[_key]:
+#                         q.append(or_(*_q))
+#                     else:
+#                         q.append(not_(or_(*_q)))
+
+
+#             elif _key == 'pussy':
+#                 if len(keyword[_key]) > 0:
+#                     # print(j, _key, 'list')
+#                     _q = []
+#                     for value in keyword[_key]:
+#                         _q.append(Video.pussy == value)
+#                     if 'not' not in keyword[_key]:
+#                         q.append(or_(*_q))
+#                     else:
+#                         q.append(not_(or_(*_q)))
+
+
+#             elif _key == 'etc':
+#                 if len(keyword[_key]) > 0:
+#                     _q = []
+#                     if '#not' in keyword[_key]:
+#                         i = keyword[_key].index('#not')
+#                         # keyword[_key].remove('not')
+#                         for value in keyword[_key][:i]:
+#                             print(value)
+#                             search = '%{}%'.format(value)
+#                             _q.append(
+#                                 or_(Video.etc.ilike(search), Video.dbid.ilike(search))
+#                             )
+#                         for value in keyword[_key][i+1:]:
+#                             search = '%{}%'.format(value)
+#                             _q.append(
+#                                 or_(not_(Video.etc.ilike(search)), not_(Video.dbid.ilike(search)))
+#                             )
+#                     else:
+#                         for value in keyword[_key]:
+#                             # print(value, 'else')
+#                             search = '%{}%'.format(value)
+#                             _q.append(
+#                                 or_(Video.etc.ilike(search), Video.dbid.ilike(search))
+#                             )
+#                     # _q.append(Video.etc == None)
+#                     q.append(and_(*_q))
+
+
+#         elif _key == 'ad_start':
+#             _q = []
+#             if keyword[_key] == True:
+#                 _q.append(Video.ad_start != None)
+#             elif keyword[_key] == False:
+#                 _q.append(Video.ad_start == None)
+#             q.append(or_(*_q))
+                
+#         elif _key == 'star':
+#             _q = []
+#             if keyword[_key] == None:
+#                 _q.append(Video.star == None)
+#             elif keyword[_key] == True:
+#                 _q.append(Video.star != None)
+#             elif keyword[_key] == '1':
+#                 _q.append(Video.star == 1)
+#             elif keyword[_key] == '2':
+#                 _q.append(Video.star == 2)
+#             elif keyword[_key] == '3':
+#                 _q.append(Video.star == 3)
+#             elif keyword[_key] == '4':
+#                 _q.append(Video.star == 4)
+#             elif keyword[_key] == '5':
+#                 _q.append(Video.star == 5)
+#             q.append(or_(*_q))
+            
+            
+#         elif type(keyword[_key]) == bool:
+            
+            
+#             if _key == 'school_uniform':
+#                 if keyword[_key] == True:
+#                     q.append(Video.school_uniform == True)
+#                 elif keyword[_key] == False:
+#                     # q.append(Video.school_uniform != True)
+#                     q.append(Video.school_uniform.isnot(True))
+            
+            
+#             if _key == 'hip':
+#                 if keyword[_key] == True:
+#                     q.append(Video.hip == True)
+#                 elif keyword[_key] == False:
+#                     q.append(Video.hip.isnot(True))
+            
+            
+            
+            
+#             if _key == 'group':
+#                 if keyword[_key] == True:
+#                     q.append(Video.group == True)
+#                 elif keyword[_key] == False:
+#                     q.append(Video.group.isnot(True))
+            
+            
+#             if _key == 'pregnant':
+#                 if keyword[_key] == True:
+#                     q.append(Video.pregnant == True)
+#                 elif keyword[_key] == False:
+#                     q.append(Video.pregnant.isnot(True))
+            
+            
+#             if _key == 'oral':
+#                 if keyword[_key] == True:
+#                     q.append(Video.oral == True)
+#                 elif keyword[_key] == False:
+#                     q.append(Video.oral.isnot(True))
+            
+            
+#             if _key == 'ani':
+#                 if keyword[_key] == True:
+#                     q.append(Video.ani == True)
+#                 elif keyword[_key] == False:
+#                     q.append(Video.ani.isnot(True))
+            
+            
+#             if _key == 'lesbian':
+#                 if keyword[_key] == True:
+#                     q.append(Video.lesbian == True)
+#                 elif keyword[_key] == False:
+#                     q.append(Video.lesbian.isnot(True))
+            
+            
+#             if _key == 'conversation':
+#                 if keyword[_key] == True:
+#                     q.append(Video.conversation == True)
+#                 elif keyword[_key] == False:
+#                     q.append(Video.conversation.isnot(True))
+                    
+            
+#             if _key == 'masturbation':
+#                 if keyword[_key] == True:
+#                     q.append(Video.masturbation == True)
+#                 elif keyword[_key] == False:
+#                     q.append(Video.masturbation.isnot(True))
+            
+            
+#             if _key == 'massage':
+#                 if keyword[_key] == True:
+#                     q.append(Video.massage == True)
+#                 elif keyword[_key] == False:
+#                     q.append(Video.massage.isnot(True))
+            
+            
+#             if _key == 'uniform':
+#                 if keyword[_key] == True:
+#                     q.append(Video.uniform == True)
+#                 elif keyword[_key] == False:
+#                     q.append(Video.uniform.isnot(True))
+            
+            
+#             if _key == 'family':
+#                 if keyword[_key] == True:
+#                     q.append(Video.family == True)
+#                 elif keyword[_key] == False:
+#                     q.append(Video.family.isnot(True))
+            
+    
+    # if 'vote' in keyword and keyword['vote']:
+    #     _video_list = db.query(Video).filter(and_(*q)).join(video_voter).order_by(Video.date_posted.desc())
+    # else:
+    #     _video_list = db.query(Video).filter(and_(*q)).order_by(Video.date_posted.desc())
+    # total = _video_list.count()
+    # video_list = _video_list.offset(skip).limit(limit).all()
+    # print(total)
+    # print(video_list[0].school_uniform, '-3-3-3-3-3-3-')
+    # return total, video_list
+    
+    
+    
 def search_video(db: Session, keyword, skip:int=0, limit:int=0):
     # print(keyword)
     q = []
     j = 0
-    for _key in keyword:
-        j = j + 1
-        if type(keyword[_key]) == list:
-            if _key == 'resolution':
-                if len(keyword[_key]) > 0:
-                    _q = []
-                    for value in keyword[_key]:
-                        if value == 'high':
-                            _q.append((Video.width * Video.height) >= 786432)
-                        elif value == 'middle':
-                            _q.append(and_(((Video.width * Video.height) < 786432), ((Video.width * Video.height) > 307200)))
-                        elif value == 'low':
-                            _q.append((Video.width * Video.height) <= 307200)
-                        else:
-                            continue
-                    if 'not' not in keyword[_key]:
-                        q.append(or_(*_q))
-                    else:
-                        q.append(not_(or_(*_q)))
-
-
-            elif _key == 'display_quality':
-                if len(keyword[_key]) > 0:
-                    _q = []
-                    for value in keyword[_key]:
-                        _q.append(Video.display_quality == value)
-                    if 'not' not in keyword[_key]:
-                        q.append(or_(*_q))
-                    else:
-                        q.append(not_(or_(*_q)))
-
-  
-            elif _key == 'country':
-                if len(keyword[_key]) > 0:
-                    _q = []
-                    for value in keyword[_key]:
-                        _q.append(Video.country == value)
-                    if 'not' not in keyword[_key]:
-                        q.append(or_(*_q))
-                    else:
-                        q.append(not_(or_(*_q)))
-                        
-
-            elif _key == 'face':
-                if len(keyword[_key]) > 0:
-                    # print(j, _key, 'list')
-                    _q = []
-                    for value in keyword[_key]:
-                        _q.append(Video.face == value)
-                    if 'not' not in keyword[_key]:
-                        q.append(or_(*_q))
-                    else:
-                        q.append(not_(or_(*_q)))
-
-
-            elif _key == 'look':
-                if len(keyword[_key]) > 0:
-                    # print(j, _key, 'list')
-                    _q = []
-                    for value in keyword[_key]:
-                        _q.append(Video.look == value)
-                    if 'not' not in keyword[_key]:
-                        q.append(or_(*_q))
-                    else:
-                        q.append(not_(or_(*_q)))
-
-
-            elif _key == 'age':
-                if len(keyword[_key]) > 0:
-                    # print(j, _key, 'list')
-                    _q = []
-                    for value in keyword[_key]:
-                        _q.append(Video.age == value)
-                    if 'not' not in keyword[_key]:
-                        q.append(or_(*_q))
-                    else:
-                        q.append(not_(or_(*_q)))
-
-
-            elif _key == 'pussy':
-                if len(keyword[_key]) > 0:
-                    # print(j, _key, 'list')
-                    _q = []
-                    for value in keyword[_key]:
-                        _q.append(Video.pussy == value)
-                    if 'not' not in keyword[_key]:
-                        q.append(or_(*_q))
-                    else:
-                        q.append(not_(or_(*_q)))
-
-
-            elif _key == 'etc':
-                if len(keyword[_key]) > 0:
-                    _q = []
-                    if '#not' in keyword[_key]:
-                        i = keyword[_key].index('#not')
-                        # keyword[_key].remove('not')
-                        for value in keyword[_key][:i]:
-                            print(value)
-                            search = '%{}%'.format(value)
-                            _q.append(
-                                or_(Video.etc.ilike(search), Video.dbid.ilike(search))
-                            )
-                        for value in keyword[_key][i+1:]:
-                            search = '%{}%'.format(value)
-                            _q.append(
-                                or_(not_(Video.etc.ilike(search)), not_(Video.dbid.ilike(search)))
-                            )
-                    else:
-                        for value in keyword[_key]:
-                            # print(value, 'else')
-                            search = '%{}%'.format(value)
-                            _q.append(
-                                or_(Video.etc.ilike(search), Video.dbid.ilike(search))
-                            )
-                    # _q.append(Video.etc == None)
-                    q.append(and_(*_q))
-
-
-        elif _key == 'ad_start':
-            _q = []
-            if keyword[_key] == True:
-                _q.append(Video.ad_start != None)
-            elif keyword[_key] == False:
-                _q.append(Video.ad_start == None)
+    print(type(keyword))
+    print(keyword)
+    if ('resolution' in keyword) and (len(keyword['resolution']) > 0):
+        _q = []
+        for value in keyword['resolution']:
+            if value == 'high':
+                _q.append((Video.width * Video.height) >= 786432)
+            elif value == 'middle':
+                _q.append(and_(((Video.width * Video.height) < 786432), ((Video.width * Video.height) > 307200)))
+            elif value == 'low':
+                _q.append((Video.width * Video.height) <= 307200)
+            else:
+                continue
+        if 'not' not in keyword['resolution']:
             q.append(or_(*_q))
+        else:
+            q.append(not_(or_(*_q)))
+
+
+    if ('display_quality' in keyword) and (len(keyword['display_quality']) > 0):
+        _q = []
+        for value in keyword['display_quality']:
+            if value == 'not':
+                _q.append(Video.display_quality.is_(None))
+            else:
+                _q.append(Video.display_quality == value)
+        q.append(or_(*_q))
+
+            
+    if ('country' in keyword) and (len(keyword['country']) > 0):
+        _q = []
+        for value in keyword['country']:
+            if value=='not':
+                _q.append(Video.country.is_(None))
+            else:
+                _q.append(Video.country == value)
+        q.append(or_(*_q))
                 
-        elif _key == 'star':
-            _q = []
-            if keyword[_key] == None:
-                _q.append(Video.star == None)
-            elif keyword[_key] == True:
-                _q.append(Video.star != None)
-            elif keyword[_key] == '1':
-                _q.append(Video.star == 1)
-            elif keyword[_key] == '2':
-                _q.append(Video.star == 2)
-            elif keyword[_key] == '3':
-                _q.append(Video.star == 3)
-            elif keyword[_key] == '4':
-                _q.append(Video.star == 4)
-            elif keyword[_key] == '5':
-                _q.append(Video.star == 5)
-            q.append(or_(*_q))
+
+    if ('face' in keyword) and (len(keyword['face']) > 0):
+        _q = []
+        for value in keyword['face']:
+            if value=='not':
+                _q.append(Video.face.is_(None))
+            else:
+                _q.append(Video.face == value)
+        q.append(or_(*_q))
+
+
+    if ('look' in keyword) and (len(keyword['look']) > 0):
+        _q = []
+        for value in keyword['look']:
+            if value=='not':
+                _q.append(Video.look.is_(None))
+            else:
+                _q.append(Video.look == value)
+        q.append(or_(*_q))
+
+
+
+    if ('age' in keyword) and (len(keyword['age']) > 0):
+        _q = []
+        for value in keyword['age']:
+            if value=='not':
+                _q.append(Video.age.is_(None))
+            else:
+                _q.append(Video.age == value)
+        q.append(or_(*_q))
+
+
+
+    if ('pussy' in keyword) and (len(keyword['pussy']) > 0):
+        _q = []
+        for value in keyword['pussy']:
+            if value=='not':
+                _q.append(Video.pussy.is_(None))
+            else:
+                _q.append(Video.pussy == value)
+        q.append(or_(*_q))
+
+
+    if ('etc' in keyword) and (len(keyword['etc']) > 0):
+        _q = []
+        if '#not' in keyword['etc']:
+            i = keyword['etc'].index('#not')
+            # keyword['etc'].remove('not')
+            for value in keyword['etc'][:i]:
+                print(value)
+                search = '%{}%'.format(value)
+                _q.append(
+                    or_(Video.etc.ilike(search), Video.dbid.ilike(search))
+                )
+            for value in keyword['etc'][i+1:]:
+                search = '%{}%'.format(value)
+                _q.append(
+                    or_(not_(Video.etc.ilike(search)), not_(Video.dbid.ilike(search)))
+                )
+        else:
+            for value in keyword['etc']:
+                # print(value, 'else')
+                search = '%{}%'.format(value)
+                _q.append(
+                    or_(Video.etc.ilike(search), Video.dbid.ilike(search))
+                )
+        # _q.append(Video.etc == None)
+        q.append(and_(*_q))
+
+
+    if 'ad_start' in keyword:
+        _q = []
+        if keyword['ad_start'] == True:
+            _q.append(Video.ad_start.isnot(None))
+        elif keyword['ad_start'] == False:
+            _q.append(Video.ad_start.is_(None))
+        q.append(or_(*_q))
             
+    if 'star' in keyword:
+        _q = []
+        if keyword['star'] == None:
+            _q.append(Video.star.is_(None))
+        elif keyword['star'] == True:
+            _q.append(Video.star.isnot(None))
+        elif keyword['star'] == '1':
+            _q.append(Video.star == 1)
+        elif keyword['star'] == '2':
+            _q.append(Video.star == 2)
+        elif keyword['star'] == '3':
+            _q.append(Video.star == 3)
+        elif keyword['star'] == '4':
+            _q.append(Video.star == 4)
+        elif keyword['star'] == '5':
+            _q.append(Video.star == 5)
+        q.append(or_(*_q))
+        
+        
+    
+    if 'school_uniform' in keyword:
+        if keyword['school_uniform'] == True:
+            q.append(Video.school_uniform == True)
+        elif keyword['school_uniform'] == False:
+            # q.append(Video.school_uniform != True)
+            q.append(Video.school_uniform.isnot(True))
+    
+    
+    if 'hip' in keyword:
+        if keyword['hip'] == True:
+            q.append(Video.hip == True)
+        elif keyword['hip'] == False:
+            q.append(Video.hip.isnot(True))
+    
+    
+    
+    
+    if 'group' in keyword:
+        if keyword['group'] == True:
+            q.append(Video.group == True)
+        elif keyword['group'] == False:
+            q.append(Video.group.isnot(True))
+    
+    
+    if 'pregnant' in keyword:
+        if keyword['pregnant'] == True:
+            q.append(Video.pregnant == True)
+        elif keyword['pregnant'] == False:
+            q.append(Video.pregnant.isnot(True))
+    
+    
+    if 'oral' in keyword:
+        if keyword['oral'] == True:
+            q.append(Video.oral == True)
+        elif keyword['oral'] == False:
+            q.append(Video.oral.isnot(True))
+    
+    
+    if 'ani' in keyword:
+        if keyword['ani'] == True:
+            q.append(Video.ani == True)
+        elif keyword['ani'] == False:
+            q.append(Video.ani.isnot(True))
+    
+    
+    if 'lesbian' in keyword:
+        if keyword['lesbian'] == True:
+            q.append(Video.lesbian == True)
+        elif keyword['lesbian'] == False:
+            q.append(Video.lesbian.isnot(True))
+    
+    
+    if 'conversation' in keyword:
+        if keyword['conversation'] == True:
+            q.append(Video.conversation == True)
+        elif keyword['conversation'] == False:
+            q.append(Video.conversation.isnot(True))
             
-        elif type(keyword[_key]) == bool:
-            
-            
-            if _key == 'school_uniform':
-                if keyword[_key] == True:
-                    q.append(Video.school_uniform == True)
-                elif keyword[_key] == False:
-                    q.append(Video.school_uniform != True)
-            
-            
-            if _key == 'hip':
-                if keyword[_key] == True:
-                    q.append(Video.hip == True)
-                elif keyword[_key] == False:
-                    q.append(Video.hip != True)
-            
-            
-            
-            
-            if _key == 'group':
-                if keyword[_key] == True:
-                    q.append(Video.group == True)
-                elif keyword[_key] == False:
-                    q.append(Video.group != True)
-            
-            
-            if _key == 'pregnant':
-                if keyword[_key] == True:
-                    q.append(Video.pregnant == True)
-                elif keyword[_key] == False:
-                    q.append(Video.pregnant != True)
-            
-            
-            if _key == 'oral':
-                if keyword[_key] == True:
-                    q.append(Video.oral == True)
-                elif keyword[_key] == False:
-                    q.append(Video.oral != True)
-            
-            
-            if _key == 'ani':
-                if keyword[_key] == True:
-                    q.append(Video.ani == True)
-                elif keyword[_key] == False:
-                    q.append(Video.ani != True)
-            
-            
-            if _key == 'lesbian':
-                if keyword[_key] == True:
-                    q.append(Video.lesbian == True)
-                elif keyword[_key] == False:
-                    q.append(Video.lesbian != True)
-            
-            
-            if _key == 'conversation':
-                if keyword[_key] == True:
-                    q.append(Video.conversation == True)
-                elif keyword[_key] == False:
-                    q.append(Video.conversation != True)
-                    
-            
-            if _key == 'masturbation':
-                if keyword[_key] == True:
-                    q.append(Video.masturbation == True)
-                elif keyword[_key] == False:
-                    q.append(Video.masturbation != True)
-            
-            
-            if _key == 'massage':
-                if keyword[_key] == True:
-                    q.append(Video.massage == True)
-                elif keyword[_key] == False:
-                    q.append(Video.massage != True)
-            
-            
-            if _key == 'uniform':
-                if keyword[_key] == True:
-                    q.append(Video.uniform == True)
-                elif keyword[_key] == False:
-                    q.append(Video.uniform != True)
-            
-            
-            if _key == 'family':
-                if keyword[_key] == True:
-                    q.append(Video.family == True)
-                elif keyword[_key] == False:
-                    q.append(Video.family != True)
+    
+    if 'masturbation' in keyword:
+        if keyword['masturbation'] == True:
+            q.append(Video.masturbation == True)
+        elif keyword['masturbation'] == False:
+            q.append(Video.masturbation.isnot(True))
+    
+    
+    if 'massage' in keyword:
+        if keyword['massage'] == True:
+            q.append(Video.massage == True)
+        elif keyword['massage'] == False:
+            q.append(Video.massage.isnot(True))
+    
+    
+    if 'uniform' in keyword:
+        if keyword['uniform'] == True:
+            q.append(Video.uniform == True)
+        elif keyword['uniform'] == False:
+            q.append(Video.uniform.isnot(True))
+    
+    
+    if 'family' in keyword:
+        if keyword['family'] == True:
+            q.append(Video.family == True)
+        elif keyword['family'] == False:
+            q.append(Video.family.isnot(True))
             
     
     if 'vote' in keyword and keyword['vote']:
@@ -299,6 +539,5 @@ def search_video(db: Session, keyword, skip:int=0, limit:int=0):
     total = _video_list.count()
     video_list = _video_list.offset(skip).limit(limit).all()
     print(total)
+    # print(video_list[0].school_uniform, '-3-3-3-3-3-3-')
     return total, video_list
-    
-    
