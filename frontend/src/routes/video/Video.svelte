@@ -68,9 +68,28 @@
     )
   }
 
+  function toGif(video) {
+    let _gif = encodeURIComponent("/video/" + 
+               video.dbid.substring(0,video.dbid.indexOf('/')+1) + 
+               'gif/' + video.dbid.substring(video.dbid.indexOf('/') + 1, 
+               video.dbid.lastIndexOf('.')) + ".gif")
+    return _gif
+  }
+  function toWebp(video) {
+    let _webp = encodeURIComponent("/video/" + 
+               video.dbid.substring(0,video.dbid.indexOf('/')+1) + 
+               'webp/' + video.dbid.substring(video.dbid.indexOf('/') + 1, 
+               video.dbid.lastIndexOf('.')) + ".webp")
+    return _webp
+  }
+
+
   $: total_page = Math.ceil(total/size)    
   $: $page, $keyword, search_video()
+
+
   
+
 </script>
 
 
@@ -119,13 +138,10 @@
     <div class="col-xxl-2 col-xl-3 col-lg-4 col-sm-6" style="object-fit: scale-down;">
       <div class="img-container" style="text-align: center;">
         <img 
-          src='{
-            encodeURIComponent("/video/" + 
-            video.dbid.substring(0,video.dbid.indexOf('/')+1) + 
-            'gif/' + video.dbid.substring(video.dbid.indexOf('/')+1, video.dbid.lastIndexOf('.')) + ".gif")  
-          }' 
+          src='{toWebp(video)}' 
             alt="" class="img-thumbnail img-responsive">
           <br>
+        <p class="lh-1" style="font-size: smaller;">
         <!-- 추천 -->
         {#if video.voter.length > 0}
           <button class="btn btn-sm btn-light" on:click="{delVote(video.id)}">
@@ -136,19 +152,17 @@
           추천
         </button>
         {/if}
-
         <button class="btn btn-sm light" on:click={open_videoInfo_modal(video)}>modal</button>
-        <a href="{'kddddds://http://' + video.dbid}" 
-          class="caption display-7" 
-          style="font-size:smaller; white-space: normal; word-break: break-all;">
-              # {video.dbid.substr(0,20)} 
-        </a>
-        <sapn class="video-info">
+          <a href="{'kddddds://http://' + video.dbid}" 
+            class="caption display-7" 
+            style="font-size:smaller; white-space: normal; word-break: break-all;">
+            # {video.dbid.substr(0,20)} 
+          </a>
           # {video.etc} # {video.width}x{video.height} 
           # {parseInt(video.showtime/60)}분{video.showtime%60}초
           # {parseInt(video.bitrate/1000)}kbps # {parseInt(video.filesize/1000000)}MB
           <!-- # 수정 날자: {video.date_modified}  # 작성 날자: {video.date_posted}  # cdate: {video.cdate}<br> -->
-        </sapn>
+        </p>
       </div>
     </div>
     {/each}
@@ -202,7 +216,7 @@
 <Modal bind:this={modal_search}>
   <!-- Modal content -->
   <Search />
-  <button on:click={modal_search.hide()} style="font-size: smaller; text-align: right;">Close</button>
+  <button on:click={() => modal_search.hide()} style="font-size: smaller; text-align: right;">Close</button>
 </Modal>
 
 <Modal bind:this={modal_post}>

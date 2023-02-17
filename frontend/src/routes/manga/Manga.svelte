@@ -14,9 +14,6 @@
   let little = false
   
   
-  $: total_page = Math.ceil(total/size)    
-  $: $mangaPage, $mangaKeyword, search()
-  search()
   
   function refresh() {
     fastapi ('get', '/api/manga/refresh',  {}, (json) => {
@@ -31,12 +28,12 @@
       manga_id: _manga_id
     }
     fastapi('post', url, params,
-      (json) => {
-        search()
-      },
-      (err_json) => {
-        error = err_json
-      }
+    (json) => {
+      search()
+    },
+    (err_json) => {
+      error = err_json
+    }
     )
   }
   
@@ -46,12 +43,12 @@
       manga_id: _manga_id
     }
     fastapi('delete', url, params,
-      (json) => {
-        search()
-      },
-      (error_json) => {
-
-      }
+    (json) => {
+      search()
+    },
+    (error_json) => {
+      
+    }
     )
   }
   
@@ -68,7 +65,7 @@
     fastapi('get', '/api/manga/search', params, (json) => {
       manga_list = json.manga_list
       total = json.total
-
+      
     })
   }
   
@@ -93,25 +90,28 @@
     $mangaKeyword = ''
     search()
   }
-
+  
   function closemodal() {
     modal_search.hide()
   }
+  $: total_page = Math.ceil(total/size)    
+  $: $mangaPage, $mangaKeyword, search()
+  search()
   
-// function get_mangas_list(_page) {
-//   let params = {
-//     page: _page,
-//     size: size,
-//   }
-//   fastapi('get', '/api/manga/list', params, (json) => {
-//     manga_list = json.manga_list
-//     total = json.total
-//     $mangaPage = _page
-//     // console.log(manga_list)
-//   })
-// }
-
-</script>
+  // function get_mangas_list(_page) {
+    //   let params = {
+      //     page: _page,
+      //     size: size,
+      //   }
+      //   fastapi('get', '/api/manga/list', params, (json) => {
+        //     manga_list = json.manga_list
+        //     total = json.total
+        //     $mangaPage = _page
+        //     // console.log(manga_list)
+        //   })
+        // }
+        
+      </script>
 
 <div class="container-xxl">
   <div class="header-button">

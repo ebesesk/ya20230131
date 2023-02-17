@@ -1,5 +1,5 @@
 <script>
-  import VideoModal from '../components/Modal.svelte'
+  import VideoModal from '../../components/Modal.svelte'
   let videomodal
   let id = 'ID'
 </script>

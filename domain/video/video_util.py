@@ -261,7 +261,7 @@ def cut_longfilename(detect_files):
     for f in detect_files:
         # if len(f[f.rfind('/')+1:f.rfind('.')]) > 150:
             # print(f[:f.rfind('.')])
-        name = f[:f.rfind('.')]     
+        name = f[:f.rfind('.')].replace('&', ' ')     
         if len(name) > 190:
             try:    
                 dest = name[:190]+f[f.rfind('.'):]
@@ -317,9 +317,9 @@ def add_dbids(db, detect_files):
         dbid.filesize = video_dbid['filesize']
         if 'cdate' in video_dbid:
             dbid.cdate = video_dbid['cdate']
-        if not os.path.isdir(dbid.gifdir):  # gif 경로 만들기
+        if not os.path.isdir(dbid.gifdir):  # gif 경로 디렉토리 만들기
             os.mkdir(dbid.gifdir)
-        if not os.path.isdir(dbid.webpdir): # webp 경로만들기
+        if not os.path.isdir(dbid.webpdir): # webp 경로 디렉토 만들기
             os.mkdir(dbid.webpdir)
         # 세로가 길면 회선해서 이미지 제작
         if (video_dbid['width'] > video_dbid['height']):

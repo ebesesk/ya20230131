@@ -1,0 +1,48 @@
+<script>
+    import fastapi from "../../../lib/api";
+    
+    let scanInfo = {
+      OverflowError: [],
+      NotImplementedError: [],
+      FileNotFoundError: [],
+      알수없는에러: [],
+      db_추가: [],
+      converted: [],
+      make_gif: [],
+      make_webp: [],
+      delete_gif:[],
+      delet_webp: [],
+      delet_dbids: [],
+      detect_files: [],
+    }
+    
+    function scan_files() {
+        fastapi('get', '/api/video/scan_files', {}, (json) => {
+            scanInfo = json
+        })
+    }
+    
+</script>
+<span class="btn-span">
+  <a class="btn" on:click={scan_files}>파일정리</a>
+</span>
+---------------------------------------------------------------------------------------<br>
+{#each Object.entries(scanInfo) as [k, v]}
+<b>{k} : {v.length}</b><br>  
+{#each v as k}
+{k}<br>
+{/each}
+---------------------------------------------------------------------------------------<br>
+{/each}
+    
+<style>
+.btn-span {
+  display: flex;
+  flex-direction: row;
+  justify-content: end; 
+}
+a.btn {
+  font-size: small;
+}
+</style>   
+    

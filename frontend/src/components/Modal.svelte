@@ -1,27 +1,6 @@
 <script>
   import { createEventDispatcher, onDestroy } from 'svelte';
   import { clickOutside } from '../lib/clickOutside';
-  const handle_keydown = e => {
-    if (e.key === 'Escape') {
-      close();
-      return;
-    }
-    
-    if (e.key === 'Tab') {
-      // trap focus
-			const nodes = modal.querySelectorAll('*');
-			const tabbable = Array.from(nodes).filter(n => n.tabIndex >= 0);
-      
-			let index = tabbable.indexOf(document.activeElement);
-			if (index === -1 && e.shiftKey) index = 0;
-      
-			index += tabbable.length + (e.shiftKey ? -1 : 1);
-			index %= tabbable.length;
-      
-			tabbable[index].focus();
-			e.preventDefault();
-		}
-  }
   
   const previously_focused = typeof document !== 'undefined' && document.activeElement;
   
@@ -30,9 +9,7 @@
       previously_focused.focus();
 		});
 	}
-  
-  
-    
+     
 
   let _video = ''
   let shown = false;
@@ -64,7 +41,7 @@
            border-radius: 0.2em;
            background: white;"
   >
-    <span class="close" on:click={hide}>&times;</span>
+    <span class="close" on:click={() => hide()}>&times;</span>
     <slot />
   </div>
 </div>
