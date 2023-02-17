@@ -60,7 +60,35 @@ function delVote(_video_id) {
     }
   )
 }
+function doDislike(_video_id) {
+  let url='/api/video/dislike'
+  let params = {
+    video_id: _video_id
+  }
+  fastapi('post', url, params,
+    (json) => {
+      search_video()
+    },
+    (err_json) => {
+      error = err_json
+    }
+  )
+}
 
+function delDislike(_video_id) {
+  let url = "/api/video/deldislike"
+  let params = {
+    video_id: _video_id
+  }
+  fastapi('delete', url, params,
+    (json) => {
+      search_video()
+    },
+    (err_jso) => {
+      error = err_json
+    }
+  )
+}
 
 function toGif(video) {
   let _gif = encodeURIComponent("/video/" + 
@@ -92,7 +120,12 @@ function inputInfo(v) {
   videoInfo = v
 }
 
-
+// function doDislike() {
+//   pass
+// }
+// function delDislike() {
+//   pass
+// }
 </script>
 
 
@@ -114,26 +147,33 @@ function inputInfo(v) {
   <Pagination {size} {total} />
   <div class="row">
     {#each video_list as video}
-    <div class="card rounded-0 border-0 px-0 mx-0" style="width: 18rem;">
+
+    <div class="card px-0 mx-0 mb-3">
       <!-- <input type="checkbox" checked={yes}> -->
       <img src="{toWebp(video)}" class="card-img-top" alt="..." id={video.id} on:click={changeImage(video)}>
-      <div class="card-body text-bg-light list-unstyled">
+      <div class="card-body list-unstyled">
+
         <p class="card-text">
           {#if video.voter.length > 0}
           <button class="btn btn-sm btn-light card-btn" on:click="{delVote(video.id)}">
             <sapn class="badge rounded-pill bg-danger">{video.voter.length}</sapn>
           </button>
+          {:else if video.dislike.length > 0}
+          <button class="btn btn-sm btn-light card-btn" on:click="{delDislike(video.id)}">
+            <sapn class="badge rounded-pill bg-dark">{video.dislike.length}</sapn>
+          </button>
           {:else}
-          <button class="btn btn-sm btn-light card-btn" on:click="{doVote(video.id)}">추천</button>
+          <button class="btn btn-sm btn-light card-btn vote text-bg-danger" on:click="{doVote(video.id)}">Like</button>
+          <button class="btn btn-sm btn-light card-btn vote text-bg-dark" on:click="{doDislike(video.id)}">Dis</button>
           {/if}
           
           
           <button type="button" 
-            class="btn btn-light btn-sm card-btn" 
+            class="btn btn-light btn-sm card-btn text-bg-info" 
             data-bs-toggle="modal" 
             data-bs-target="#Modal"
             on:click={inputInfo(video)} 
-          >수정</button>
+          >info</button>
           
           
             <a class="card-title" href="{'kddddds://http://' + video.dbid}">{video.dbid.substr(0,50)}</a>
@@ -174,6 +214,7 @@ function inputInfo(v) {
 
 
 <style>
+
 .col.btn-offcanvas {
   display: grid;
   /* justify-items: end; */
@@ -195,11 +236,16 @@ function inputInfo(v) {
   justify-content: center;
   justify-self: center;
 }
+.card.border-danger {
+  border: 1;
+}
 .card {
+  width: 18rem;
   /* width: 0px; */
   /* margin: 0; */
   padding-left: 1px;
   /* height: 100%; */
+  border: 0;
 }
 .card-img-top {
   width: 100%;
@@ -214,13 +260,21 @@ function inputInfo(v) {
   line-height: 1.3;
 }
 .card-btn {
-  font-size: smaller;
+  font-size: xx-small;
   --bs-btn-padding-y: .01rem; 
   --bs-btn-padding-x: .5rem; 
   --bs-btn-font-size: .75rem;
   /* height: ; */
 }
 .card-boy {
-  /* width: 200px; */
+  padding: 0%;
+}
+.voter {
+  background-color: rgb(235, 205, 205);
+  border-color: crimson;
+  
+}
+.dislike {
+  /* background-color: rgb(190, 187, 187); */
 }
 </style>

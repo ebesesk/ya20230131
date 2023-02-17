@@ -142,7 +142,7 @@ class Video_info(BaseModel):
     date_modified: date | None = None
     
     voter: list[User] = []
-
+    dislike: list[User] = []
     class Config:
         orm_mode = True
 
@@ -154,6 +154,8 @@ class Video_info_list(BaseModel):
 class VideoVote(BaseModel):
     video_id: int
 
+class VideoDislike(BaseModel):
+    video_id: int
 
 # class VideoItems(BaseModel):
 #     Video_list: list[VideoItem] = []

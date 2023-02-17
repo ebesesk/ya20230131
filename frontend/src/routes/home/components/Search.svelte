@@ -68,7 +68,7 @@
         <button on:click={() => {video.etc=""}} class="btn btn-light btn-sm">C</button>
         <button on:click={() => {video.etc="#not, test2"}} class="btn btn-light btn-sm">T</button>
         <button on:click={() => {video.etc="test2"}} class="btn btn-light btn-sm">t</button>
-        <button class="btn text-dark bg-primary btn-sm" on:click={onSearch}>검색</button>
+        <button class="btn text-bg-primary btn-sm" on:click={onSearch}>검색</button>
       </div>
       <p><b>검색어 #not 검색</b></p>
       <div>
@@ -382,10 +382,14 @@
 
       <div>
         <label>
-          <input type="radio" name='vote' bind:group={video.vote} value={true}>vote &nbsp;
+          <input type="radio" name='vote' bind:group={video.vote} value={true}>Vote &nbsp;
         </label>
         <button class="btn btn-light btn-sm" on:click={() => {video.vote = none}} >C</button>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <label>
+          <input type="radio" name='dislike' bind:group={video.dislike} value={true}>Dislike &nbsp;
+        </label>
+        <button class="btn btn-light btn-sm" on:click={() => {video.dislike = none}} >C</button>
       </div>
   </div>
   

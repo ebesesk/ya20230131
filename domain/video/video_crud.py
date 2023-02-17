@@ -2,7 +2,7 @@ import datetime
 import sqlalchemy
 from sqlalchemy import or_, and_, not_
 from sqlalchemy.orm import Session
-from models import Video, User, video_voter
+from models import Video, User, video_voter, video_dislike
 from . import video_schema
 
 def join_Video_voter(db: Session):
@@ -53,6 +53,13 @@ def delete_vote(db:Session, db_video: Video, db_user:User):
     db_video.voter.remove(db_user)
     db.commit()
 
+def dislike_video(db: Session, db_video: Video, db_user: User):
+    db_video.dislike.append(db_user)
+    db.commit()
+
+def delete_dislike(db: Session, db_video: Video, db_user: User):
+    db_video.dislike.remove(db_user)
+    db.commit()
     
     
     
@@ -283,6 +290,9 @@ def search_video(db: Session, keyword, skip:int=0, limit:int=0):
     
     if 'vote' in keyword and keyword['vote']:
         _video_list = db.query(Video).filter(and_(*q)).join(video_voter).order_by(Video.date_posted.desc())
+    elif 'dislike' in keyword and keyword['dislike']:
+        _video_list = db.query(Video).filter(and_(*q)).join(video_dislike).order_by(Video.date_posted.desc())
+        
     else:
         _video_list = db.query(Video).filter(and_(*q)).order_by(Video.date_posted.desc())
     total = _video_list.count()
