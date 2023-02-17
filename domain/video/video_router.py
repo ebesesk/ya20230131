@@ -41,7 +41,6 @@ def get_list(db: Session = Depends(get_db),
 @router.get("/detail/{video_id}", response_model=Video_info)
 def get_video(video_id: int, db: Session = Depends(get_db)):
     video = get_video_id(db=db, video_id=video_id)
-    print(video_id, '939393993999999999999')
     return video
 
 @router.put("/input_videoinfo", status_code=status.HTTP_204_NO_CONTENT)

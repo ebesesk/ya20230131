@@ -11,6 +11,14 @@ manga_voter = Table(
     Column('user_id', Integer, ForeignKey('user.id'), primary_key=True),
     Column('manga_id', Integer, ForeignKey('manga.id'), primary_key=True)
 )
+
+video_dislike = Table(
+    'video_dislike',
+    Base.metadata,
+    Column('user_id', Integer, ForeignKey('user.id'), primary_key=True),
+    Column('video_id', Integer, ForeignKey('user.id'), primary_key=True)
+)
+
 video_voter = Table(
     'video_voter', 
     Base.metadata,
@@ -124,3 +132,4 @@ class Video(Base):
     date_posted = Column(Date)
     date_modified = Column(Date)
     voter = relationship('User', secondary=video_voter, backref='video_voters')
+    dislike = relationship('User', secondary=video_dislike, backref='video_voters')
