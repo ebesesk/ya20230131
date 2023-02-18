@@ -1,7 +1,7 @@
 <script>
     import fastapi from "../../../lib/api";
     import { page, keyword } from "../../../lib/store"
-  
+    import SearchBoard from "./SearchBoard.svelte";
     let none
     
     let video = {
@@ -49,7 +49,7 @@
     }
     
   </script>
-  <div class="container"> 
+<div class="container"> 
     <!-- <div >
       <input type="text" class="form-control-sm"  bind:value="{kw}">
       <button class="btn btn-primary"  on:click={() => {$keyword = kw, $page = 0}}>검색</button>
@@ -391,8 +391,17 @@
         </label>
         <button class="btn btn-light btn-sm" on:click={() => {video.dislike = none}} >C</button>
       </div>
-  </div>
   
+  
+  <SearchBoard />
+  
+  
+</div>
+
+  
+
+
+
 <style>
 .container {
   display: flex;
@@ -438,6 +447,7 @@ div.button {
   justify-content:space-between;
   align-content: center;
 }
+
 
 
 </style>

@@ -173,7 +173,7 @@ function inputInfo(v) {
             data-bs-toggle="modal" 
             data-bs-target="#Modal"
             on:click={inputInfo(video)} 
-          >info</button>
+          >Info</button>
           
           
             <a class="card-title" href="{'kddddds://http://' + video.dbid}">{video.dbid.substr(0,50)}</a>
