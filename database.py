@@ -6,10 +6,10 @@ from sqlalchemy.orm import sessionmaker
 from config import settings
 
 
-SQLALCHEMY_DATABASE_URL = settings.SQLALCHEMY_DATABASE_URL
+SQLALCHEMY_DATABASE_URL = settings.SQLALCHEMY_DATABASE_URL_YA
 
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={'check_same_thread': False}   
+    SQLALCHEMY_DATABASE_URL, connect_args={'check_same_thread': False} # sqlite 에서만 check_same_thread:False 사용  
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

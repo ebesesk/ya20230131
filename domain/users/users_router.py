@@ -3,11 +3,11 @@ from starlette import status
 from sqlalchemy.orm import Session
 
 from database import get_db
+from models import User
 
 from . import users_schema
 from . import users_crud
 from config import settings
-from models import User
 from ..login.login_router import get_current_user
 
 router = APIRouter()

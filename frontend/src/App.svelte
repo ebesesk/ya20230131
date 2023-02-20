@@ -6,15 +6,17 @@
   import Navigation from './components/Navigation.svelte'
   
   import Manga from './routes/manga/Manga.svelte'
+  // import Video from './routes/video/Video.svelte'
   import Video from './routes/video/Video.svelte'
-  import Home from './routes/home/Home.svelte'
+  import Realstate from './routes/Realstate/Realstate.svelte'
   
   const routes = {
     '/': Login,
     '/user-create': UserCreate,
     '/manga': Manga,
-    '/video': Video,
-    '/home': Home,
+    // '/video': Video,
+    '/Video': Video,
+    '/Realstate': Realstate,
   }
 
 </script>

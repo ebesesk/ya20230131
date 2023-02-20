@@ -13,8 +13,8 @@ const fastapi = (operation, url, params, success_callback, failure_callback) => 
     if (operation === 'login') {
         method = 'post'
         content_type = 'application/x-www-form-urlencoded'
-        body = qs.stringify(params)
-    }
+        body = qs.stringify(params)      // qs는 params 데이터를 'application/x-www-form-rulencoded'형식에
+    }                                    // 맞게금 변환하는 역할을 한다.   
 
     let _url = import.meta.env.VITE_SERVER_URL + url
     if(method === 'get') {

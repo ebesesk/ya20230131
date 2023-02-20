@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from database import get_db
+from models import Manga, User
 
 from ..login.login_router import get_current_user
 from . import manga_schema
@@ -12,7 +13,6 @@ from .manga_crud import (bulk_insert_mangas, get_all_mangas, delete_db_list,
                          get_manga_list, delete_id, vote_manga, get_manga,
                          search_manga,del_voted_manga)
 from . import manga_util
-from models import Manga, User
 
 from config import settings
 

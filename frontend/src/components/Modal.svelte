@@ -41,7 +41,9 @@
            border-radius: 0.2em;
            background: white;"
   >
-    <span class="close" on:click={() => hide()}>&times;</span>
+  <button class="btn btn-light" on:click={() => hide()}>
+    <span class="close" >&times;</span>
+  </button>  
     <slot />
   </div>
 </div>

@@ -6,16 +6,31 @@
 
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/">햣</a>
+    <a class="navbar-brand" href="/"
+       on:click={() => {
+         $access_token = ''
+         $username=''
+         $is_login=false
+       }}>
+      햣
+      {#if $is_login}
+      LogOut
+      {/if}
+    </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
       <ul class="navbar-nav">
-        <li class="nav-item">
-          <a use:link class="nav-link" aria-current="page" href="/home">Home</a>
-        </li>
         {#if $is_login}
+        <li class="nav-item">
+          <a use:link class="nav-link" aria-current="page" href="/realestate">부동산</a>
+        </li>
+
+        <li class="nav-item">
+          <a use:link class="nav-link" aria-current="page" href="/video">video</a>
+        </li>
+        
         <li class="nav-item dropdown">
           <a use:link class="nav-link dropdown-toggle" href="/manga" id="navbarDropdownMenuLinkmanga" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             만화
@@ -70,13 +85,13 @@
 </nav>
 
 <style>
-  .navbar {
-  }
-  .container {
+  /* .navbar.navbar-expand-sm {
+  } */
+  /* .container {
     display: flex;
     justify-items: flex-end;
     justify-content: flex-end;
-  }
+  } */
   .dropdown-item {
     justify-self: flex-end;
   }

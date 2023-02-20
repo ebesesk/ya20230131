@@ -5,8 +5,10 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path=".env")
 
 class Settings:
-    SQLALCHEMY_DATABASE_URL = os.environ.get("SQLALCHEMY_DATABASE_URL")
+    SQLALCHEMY_DATABASE_URL_REALESTATE = os.environ.get('SQLALCHEMY_DATABASE_URL_REALESTATE')
+    SQLALCHEMY_DATABASE_URL_YA = os.environ.get("SQLALCHEMY_DATABASE_URL_YA")
     ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES"))
+    # ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES"))
     SECRET_KEY = os.environ.get("SECRET_KEY")
     ALGORITHM = os.environ.get("ALGORITHM")
     
@@ -18,4 +20,6 @@ class Settings:
     GIF_FRAMES_MAX = int(os.environ.get("GIF_FRAMES_MAX"))
     GIF_SIZE = int(os.environ.get("GIF_SIZE"))
     WASTE_DIR = os.environ.get("WASTE_DIR")
+    
+    DATA_GO_KR_SERVICE_KEY = os.environ.get('DATA_GO_KR_SERVICE_KEY')
 settings = Settings()

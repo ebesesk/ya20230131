@@ -157,5 +157,7 @@ class VideoVote(BaseModel):
 class VideoDislike(BaseModel):
     video_id: int
 
+class Video_etckey(BaseModel):
+    keywords: list[str]
 # class VideoItems(BaseModel):
 #     Video_list: list[VideoItem] = []

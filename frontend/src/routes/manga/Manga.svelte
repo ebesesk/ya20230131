@@ -131,7 +131,7 @@
       </label>
     <!-- 검색 -->
       <input type="text" bind:value={searchValue} placeholder="검색"/>
-      <button on:click={onsearch}>검색</button>
+      <button on:click={onSearch}>검색</button>
     </form>
   </div>
   

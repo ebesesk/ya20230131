@@ -5,10 +5,13 @@ from pathlib import Path
 import json
 
 from database import get_db
+from models import User
+
+
 from .video_crud import (get_all_videos, get_video_list, get_video_id, 
-                         input_videoinfo, del_dbid, search_video, 
+                         input_videoinfo, del_dbid, search_video, get_keyword,
                          vote_video, delete_vote, dislike_video, delete_dislike)
-from .video_schema import (Video_info, Video_info_list, Video_update, 
+from .video_schema import (Video_info, Video_info_list, Video_update, Video_etckey,
                            Video_dbids, VideoVote, Scanreturn, VideoDislike)
 # from models import Video
 # from db.repository.users import create_new_user
@@ -16,7 +19,6 @@ from . import video_util
 from config import settings
 # from .stream_mp4 import range_requests_response
 from ..login.login_router import get_current_user
-from models import User
 
 router =APIRouter()
 VIDEO_DIR = settings.VIDEO_DIR
@@ -39,12 +41,16 @@ def get_list(db: Session = Depends(get_db),
 
 # VideoInfo.svelte
 @router.get("/detail/{video_id}", response_model=Video_info)
-def get_video(video_id: int, db: Session = Depends(get_db)):
+def get_video(video_id: int, 
+              db: Session = Depends(get_db),
+              current_user: User = Depends(get_current_user)):
     video = get_video_id(db=db, video_id=video_id)
     return video
 
 @router.put("/input_videoinfo", status_code=status.HTTP_204_NO_CONTENT)
-def input_modified_videoinfo(_video_info: Video_update, db:Session=Depends(get_db)):
+def input_modified_videoinfo(_video_info: Video_update, 
+                             db:Session=Depends(get_db),
+                             current_user: User = Depends(get_current_user)):
     # from urllib.parse import unquote
     # _video_info.dbid = unquote(_video_info.dbid)
     video_info = {}
@@ -61,7 +67,8 @@ def input_modified_videoinfo(_video_info: Video_update, db:Session=Depends(get_d
 
 # Scanfiles.svelte
 @router.get("/scan_files", response_model=Scanreturn)
-def file_scan(db: Session=Depends(get_db)):
+def file_scan(db: Session=Depends(get_db),
+              current_user: User = Depends(get_current_user)):
     # video_util.scan_files(db)
     return video_util.scan_files(db)
 
@@ -75,18 +82,34 @@ def file_scan(db: Session=Depends(get_db)):
 #     # video_util.add_dbids(db, detect_files)
 #     # return video_util.add_dbids(db)
 
+@router.get("/keywords", response_model=Video_etckey)
+def get_keyword_db(db: Session = Depends(get_db),
+                   current_user: User = Depends(get_current_user)):
+    keywords = []
+    for key in get_keyword(db):
+        for i in key:
+            if (i.strip() not in keywords) and (i.strip() is not ''):
+                keywords.append(i.strip())
+                print(i.strip())
+    keywords = list(set(keywords))
+    for i in keywords:
+        print(i)
+    return {'keywords': keywords}
+
 
 
 # Search.svelte
 @router.get("/search", response_model=Video_info_list)
 def get_search(db: Session=Depends(get_db),
+               current_user: User = Depends(get_current_user),
                page: int = 0,
                size: int = 10,
                keyword:str=''):
     keyword = json.loads(keyword)
-    if 'etc' in [i for i in keyword] and len(keyword['etc']) > 0:
+    if ('etc' in keyword) and (len(keyword['etc']) > 0):
         keyword['etc'] = keyword['etc'].strip().split(',')
-    keyword['etc'] = [i.strip() for i in keyword['etc']]
+        keyword['etc'] = [i.strip() for i in keyword['etc']]
+        # keyword['etc'].remove('')
     # 빈값 삭제
     keyword_copy = keyword.copy()
     for k in keyword_copy:

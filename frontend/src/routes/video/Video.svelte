@@ -1,300 +1,284 @@
 <script>
+import fastapi from "../../lib/api";
+import { page, keyword } from "../../lib/store"
+import Pagination from "./components/Pagination.svelte";
 
-  import fastapi from "../../lib/api";
-  import { page, keyword } from "../../lib/store"
-  import { clickOutside } from "../../lib/clickOutside";
-  
-  import Modal from "../../components/Modal.svelte";
-  import VideoInfo from "./components/VideoInfo.svelte" 
-  import ScanFiles from "./components/Scanfiles.svelte"
-  import Search from "./components/Search.svelte";
-  import Post from "./components/Post.svelte";
-  
-  let video_list = []
-  let size = 16
-  let total = 0
-  let modal_scanfiles
-  let modal_videoInfo
-  let modal_search
-  let modal_post
-  let videoInfo   // modal_videoInfo props
-  
-  
-  function open_videoInfo_modal(video) {
-    videoInfo = video
-    modal_videoInfo.show()
+import Modal2 from '../../components/Modal2.svelte';
+// import Info from "./components/Info.svelte";
+// import Scan from "./components/Scan.svelte";
+import Offcanvas from "./components/Offcanvas.svelte";
+import Info from "./components/Info.svelte"
+import SearchBoard from "./components/SearchBoard.svelte";
+// import env from 'meta'
+
+let video_list = []
+let size = 60
+let total = 0
+
+$: total_page = Math.ceil(total/size)    
+$: $page, $keyword, search_video()
+
+
+function search_video() {
+  let params = {
+    page: $page,
+    size: size,
+    keyword: $keyword
   }
-  
-  
-  function search_video() {
-    let params = {
-      page: $page,
-      size: size,
-      keyword: $keyword
+  fastapi('get', '/api/video/search', params, (json) => {
+    // console.log(json.video_list)
+    video_list = json.video_list
+    total = json.total
+  })
+}
+
+function doVote(_video_id) {
+  let url = "/api/video/vote"
+  let params = {
+    video_id: _video_id
+  }
+  fastapi('post', url, params,
+    (json) => {
+      search_video()
+    },
+    (err_json) => {
+      error = err_json
     }
-    fastapi('get', '/api/video/search', params, (json) => {
-      console.log(json.video_list)
-      video_list = json.video_list
-      total = json.total
-    })
-  }
+  )
+}
 
-  function voteVideo(_video_id) {
-    let url = "/api/video/vote"
-    let params = {
-      video_id: _video_id
+function delVote(_video_id) {
+  let url = "/api/video/delvote"
+  let params = {
+    video_id: _video_id,
+  }
+  fastapi('delete', url, params,
+    (json) => {
+      search_video()
+    },
+    (err_json) => {
+      error = err_json
     }
-    fastapi('post', url, params,
-      (json) => {
-        search_video()
-      },
-      (err_json) => {
-        error = err_json
-      }
-    )
+  )
+}
+function doDislike(_video_id) {
+  let url='/api/video/dislike'
+  let params = {
+    video_id: _video_id
   }
-  function delVote(_video_id) {
-    let url = "/api/video/delvote"
-    let params = {
-      video_id: _video_id,
+  fastapi('post', url, params,
+    (json) => {
+      search_video()
+    },
+    (err_json) => {
+      error = err_json
     }
-    fastapi('delete', url, params,
-      (json) => {
-        search_video()
-      },
-      (err_json) => {
-        error = err_json
-      }
-    )
+  )
+}
+
+function delDislike(_video_id) {
+  let url = "/api/video/deldislike"
+  let params = {
+    video_id: _video_id
   }
+  fastapi('delete', url, params,
+    (json) => {
+      search_video()
+    },
+    (err_jso) => {
+      error = err_json
+    }
+  )
+}
 
-  function toGif(video) {
-    let _gif = encodeURIComponent("/video/" + 
-               video.dbid.substring(0,video.dbid.indexOf('/')+1) + 
-               'gif/' + video.dbid.substring(video.dbid.indexOf('/') + 1, 
-               video.dbid.lastIndexOf('.')) + ".gif")
-    return _gif
+function toGif(video) {
+  let _gif = encodeURIComponent("/video/" + 
+              video.dbid.substring(0,video.dbid.indexOf('/')+1) + 
+              'gif/' + video.dbid.substring(video.dbid.indexOf('/') + 1, 
+              video.dbid.lastIndexOf('.')) + ".gif")
+  return _gif
+}
+function toWebp(video) {
+  let _webp = encodeURIComponent("/video/" + 
+              video.dbid.substring(0,video.dbid.indexOf('/')+1) + 
+              'webp/' + video.dbid.substring(video.dbid.indexOf('/') + 1, 
+              video.dbid.lastIndexOf('.')) + ".webp")
+  return _webp
+}
+function changeImage(video) {
+  let image = document.getElementById(video.id)
+  if (image.src.substring(image.src.lastIndexOf('.')+1) === 'gif') {
+    image.src = toWebp(video)
+  }else {
+    image.src = toGif(video)
   }
-  function toWebp(video) {
-    let _webp = encodeURIComponent("/video/" + 
-               video.dbid.substring(0,video.dbid.indexOf('/')+1) + 
-               'webp/' + video.dbid.substring(video.dbid.indexOf('/') + 1, 
-               video.dbid.lastIndexOf('.')) + ".webp")
-    return _webp
-  }
+}
 
 
-  $: total_page = Math.ceil(total/size)    
-  $: $page, $keyword, search_video()
+let videoInfo
+let info
+function inputInfo(v) {
+  videoInfo = v
+}
 
-
-  
-
+// function doDislike() {
+//   pass
+// }
+// function delDislike() {
+//   pass
+// }
 </script>
+<div class="container"><SearchBoard/></div>
 
 
 
+<div class="col btn-offcanvas">
+  <button class="btn btn-sm btn-light card-btn btn-offcanvas" 
+          type="button" 
+          data-bs-toggle="offcanvas" 
+          data-bs-target="#offcanvasRight" 
+          aria-controls="offcanvasWithBothOptions">SideMenu</button>
+</div>
 
+<Offcanvas/>
 
+<Modal2>
+  <Info {videoInfo} bind:this={info}/>
+</Modal2>
 
-
-<div class="container-xxl my-2"  >
-
-  <div class="header-button">
-    <button class="button" on:click={modal_scanfiles.show()}>ScanFiles</button>
-    <button class="button" on:click={modal_post.show()}>POST</button>
-    <button class="button" on:click={modal_search.show()}>검색</button>
-  </div>
-
-  <!-- 페이징처리 시작 -->
-  <ul class="pagination justify-content-center" style="font-size: smaller;">
-    <!-- 이전페이지 -->
-    <li class="page-item {$page <= 0 && 'disabled'}">
-      <button class="page-link" on:click="{() => $page--}"  style="font-size: smaller;">이전</button>
-    </li>
-    <!-- 페이지번호 -->
-    {#each Array(total_page) as _, loop_page}
-    {#if loop_page >= $page-5 && loop_page <= $page+5}
-          
-    <!-- <li class="page-item {(loop_page === $page && videoinfo_modal) &&  'active'}"> -->
-    <li class="page-item ">
-      <button on:click="{() => $page = loop_page}" class="page-link {(loop_page === $page) && 'font-weight-bol text-danger'}"  style="font-size: smaller;">{loop_page+1}</button>
-    </li>
-    {/if}
-    {/each}
-    <!-- 다음페이지 -->
-    <li class="page-item {$page >= total_page-1 && 'disabled'}">
-      <button class="page-link" on:click="{() => $page++}"  style="font-size: smaller;">다음</button>
-    </li>
-    <li>
-    </li>
-  </ul>
-  <!-- 페이징처리 끝 -->
-
-
-
-  <div class="row" style="float: none; margin:100 auto;">
+<div class="container-fluid ">
+  <Pagination {size} {total} />
+  <div class="row">
     {#each video_list as video}
-    <div class="col-xxl-2 col-xl-3 col-lg-4 col-sm-6" style="object-fit: scale-down;">
-      <div class="img-container" style="text-align: center;">
-        <img 
-          src='{toWebp(video)}' 
-            alt="" class="img-thumbnail img-responsive">
-          <br>
-        <p class="lh-1" style="font-size: smaller;">
-        <!-- 추천 -->
-        {#if video.voter.length > 0}
-          <button class="btn btn-sm btn-light" on:click="{delVote(video.id)}">
+
+    <div class="card px-0 mx-0 mb-3">
+      <!-- <input type="checkbox" checked={yes}> -->
+      <button class="btn btn-sm btn-light" on:click={changeImage(video)}>
+        <img src="{toWebp(video)}" class="card-img-top" alt="..." id={video.id}>
+      </button>
+      <div class="card-body list-unstyled">
+
+        <p class="card-text">
+          {#if video.voter.length > 0}
+          <button class="btn btn-sm btn-light card-btn" on:click="{delVote(video.id)}">
             <sapn class="badge rounded-pill bg-danger">{video.voter.length}</sapn>
           </button>
-        {:else}
-        <button class="btn btn-sm btn-light" on:click="{voteVideo(video.id)}">
-          추천
-        </button>
-        {/if}
-        <button class="btn btn-sm light" on:click={open_videoInfo_modal(video)}>modal</button>
-          <a href="{'kddddds://http://' + video.dbid}" 
-            class="caption display-7" 
-            style="font-size:smaller; white-space: normal; word-break: break-all;">
-            # {video.dbid.substr(0,20)} 
-          </a>
-          # {video.etc} # {video.width}x{video.height} 
-          # {parseInt(video.showtime/60)}분{video.showtime%60}초
-          # {parseInt(video.bitrate/1000)}kbps # {parseInt(video.filesize/1000000)}MB
-          <!-- # 수정 날자: {video.date_modified}  # 작성 날자: {video.date_posted}  # cdate: {video.cdate}<br> -->
+          {:else if video.dislike.length > 0}
+          <button class="btn btn-sm btn-light card-btn" on:click="{delDislike(video.id)}">
+            <sapn class="badge rounded-pill bg-dark">{video.dislike.length}</sapn>
+          </button>
+          {:else}
+          <button class="btn btn-sm btn-light card-btn vote text-bg-danger" on:click="{doVote(video.id)}">Like</button>
+          <button class="btn btn-sm btn-light card-btn vote text-bg-dark" on:click="{doDislike(video.id)}">Dis</button>
+          {/if}
+          
+          
+          <button type="button" 
+            class="btn btn-light btn-sm card-btn text-bg-info" 
+            data-bs-toggle="modal" 
+            data-bs-target="#Modal"
+            on:click={inputInfo(video)} 
+          >Info</button>
+          
+          
+            <a class="card-title" href="{'kddddds://http://' + video.dbid}">{video.dbid.substr(0,50)}</a>
+          <!-- <h5 class="card-title">Card title</h5> -->
+          <small>
+            # {video.etc} # {video.width}x{video.height} 
+            # {parseInt(video.showtime/60)}분{video.showtime%60}초
+            # {parseInt(video.bitrate/1000)}kbps # {parseInt(video.filesize/1000000)}MB
+          </small>
         </p>
       </div>
     </div>
     {/each}
   </div>
-        
-
-
-  <!-- 페이징처리 시작 -->
-  <ul class="pagination justify-content-center" style="font-size: smaller;">
-    <!-- 이전페이지 -->
-    <li class="page-item {$page <= 0 && 'disabled'}">
-      <button class="page-link" on:click="{() => $page--}"  style="font-size: smaller;">이전</button>
-    </li>
-    <!-- 페이지번호 -->
-    {#each Array(total_page) as _, loop_page}
-    {#if loop_page >= $page-5 && loop_page <= $page+5}
-          
-    <!-- <li class="page-item {(loop_page === $page && videoinfo_modal) &&  'active'}"> -->
-    <li class="page-item ">
-              
-      <button on:click="{() => $page = loop_page}" class="page-link {(loop_page === $page) && 'font-weight-bol text-danger'}"  style="font-size: smaller;">{loop_page+1}</button>
-    </li>
-    {/if}
-    {/each}
-    <!-- 다음페이지 -->
-    <li class="page-item {$page >= total_page-1 && 'disabled'}">
-      <button class="page-link" on:click="{() => $page++}"  style="font-size: smaller;">다음</button>
-    </li>
-    <li>
-    </li>
-  </ul>
-  <!-- 페이징처리 끝 -->
-        
+  <Pagination {size} {total} />
 </div>
+  
+  
 
 
 
-<!-- 모달 -->
-<Modal bind:this={modal_videoInfo}>
-<!-- Modal content -->
-  <VideoInfo videoInfo={videoInfo}/>
-  <button on:click={modal_videoInfo.hide()} style="font-size: smaller;">Close</button>
-</Modal>
-
-<Modal bind:this={modal_scanfiles}>
-  <!-- Modal content -->
-  <ScanFiles />
-  <button on:click={modal_scanfiles.hide()} style="font-size: smaller;">Close</button>
-</Modal>
-
-<Modal bind:this={modal_search}>
-  <!-- Modal content -->
-  <Search />
-  <button on:click={() => modal_search.hide()} style="font-size: smaller; text-align: right;">Close</button>
-</Modal>
-
-<Modal bind:this={modal_post}>
-  <!-- Modal content -->
-  <Post />
-  <button on:click={modal_post.hide()} style="font-size: smaller; text-align: right;">Close</button>
-</Modal>
 
 
 
-<!-- 모달끝 -->
+
+<!-- <Pagination {size} {total} /> -->
+
+
+
+
+
+<!-- <Modal2 {item}></Modal2> -->
+<!-- <Modal2 bind:this={modalInfo}>
+  <Scan />
+</Modal2> -->
+
+
 
 
 <style>
-.caption.display-7 {
-  font-size: smaller;
-  line-height: 0px;
-  text-decoration: none;
-  color: black;
-}
-.img-thumbnail {
-  height: 200px;
-  text-align: center;
-}
-.header-button {
-      display: flex;
-      justify-content: flex-end;
-      font-size: smaller;
-      /* line-height: 100%; */
-      align-items: center;
 
-    }
-.button-group {
-  /* display: inline-flex; */
-  text-align: end;
-  /* border: 1px solid #cccccc; */
-  border-radius: 4px;
-  /* overflow: hidden; */
+.col.btn-offcanvas {
+  display: grid;
+  /* justify-items: end; */
+  justify-content: end;
+  width: 100%;
+}
+.container-fluid {
+  justify-content: center;
+  padding: 0x;
+  margin: 0;
+  /* padding-left: 15px; */
+  /* margin-right: auto; */
+  /* margin-left: auto; */
+}
+.row {
+  /* width: 100%; */
+  padding: 0;
+  margin: 0;
+  justify-content: center;
+  justify-self: center;
+}
+/* .card.border-danger {
+  border: 1;
+} */
+.card {
+  width: 18rem;
+  /* width: 0px; */
+  /* margin: 0; */
+  padding-left: 1px;
+  /* height: 100%; */
+  border: 0;
+}
+.card-img-top {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+}
+.card-title {
   font-size: smaller;
 }
-
-.button {
+.card-text {
   font-size: smaller;
-  padding: 10px 16px;
-  outline: none;
-  border: none;
-  cursor: pointer;
-  border-right: 1px solid #ffffff;
-  background: #ffffff;
-  /* font-family: "Inter", sans-serif; */
+  line-height: 1.3;
 }
-
-.button:last-child {
-  border-right: none;
+.card-btn {
+  font-size: xx-small;
+  --bs-btn-padding-y: .01rem; 
+  --bs-btn-padding-x: .5rem; 
+  --bs-btn-font-size: .75rem;
+  /* height: ; */
 }
-
-.button:hover {
-  background: #cccccc;
-}
-
-.page-item {
-  font-size: smaller;
-}
-.img-thumbnail.img-responsive {
-  object-fit: scale-down;
-}
-.video-info {
-  font-size: smaller;
-  line-height: 1;
-}
-a {
-  line-height: 1;
-}
-.btn-sm.btn-light {
-  font-size: smaller;
-}
-.badge {
-  font-size: smaller;
-}
-
+/* .card-boy {
+  padding: 0%;
+} */
+/* .voter {
+  background-color: rgb(235, 205, 205);
+  border-color: crimson;
+  
+} */
+/* .dislike {
+} */
 </style>

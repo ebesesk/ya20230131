@@ -1,9 +1,10 @@
 import datetime
 import sqlalchemy
-from sqlalchemy import or_, and_, not_
+from sqlalchemy import or_, and_, not_, except_, func
 from sqlalchemy.orm import Session
-from models import Video, User, video_voter, video_dislike
 from . import video_schema
+
+from models import Video, User, video_voter, video_dislike
 
 def join_Video_voter(db: Session):
     return db.query(Video).join(video_voter).all()
@@ -60,14 +61,17 @@ def dislike_video(db: Session, db_video: Video, db_user: User):
 def delete_dislike(db: Session, db_video: Video, db_user: User):
     db_video.dislike.remove(db_user)
     db.commit()
-    
+
+def get_keyword(db:Session):
+    return db.query(Video.etc).filter(Video.etc.is_not(None)).all()
     
     
 def search_video(db: Session, keyword, skip:int=0, limit:int=0):
     # print(keyword)
     q = []
+    q_except = []
     j = 0
-    print(keyword)
+    # print(keyword)
     if ('resolution' in keyword) and (len(keyword['resolution']) > 0):
         _q = []
         for value in keyword['resolution']:
@@ -99,7 +103,8 @@ def search_video(db: Session, keyword, skip:int=0, limit:int=0):
         _q = []
         for value in keyword['country']:
             if value=='not':
-                _q.append(Video.country.is_(None))
+                _q.append(Video.country == None)
+                # _q.append(Video.country.is_(None))
             else:
                 _q.append(Video.country == value)
         q.append(or_(*_q))
@@ -144,11 +149,12 @@ def search_video(db: Session, keyword, skip:int=0, limit:int=0):
                 _q.append(Video.pussy.is_(None))
             else:
                 _q.append(Video.pussy == value)
-        q.append(or_(*_q))
+        q.append(or_(*_q)) 
 
 
     if ('etc' in keyword) and (len(keyword['etc']) > 0):
         _q = []
+        # q_ = []
         if '#not' in keyword['etc']:
             i = keyword['etc'].index('#not')
             # keyword['etc'].remove('not')
@@ -158,10 +164,12 @@ def search_video(db: Session, keyword, skip:int=0, limit:int=0):
                     or_(Video.etc.ilike(search), Video.dbid.ilike(search))
                 )
             for value in keyword['etc'][i+1:]:
-                search = '%{}%'.format(value)
-                _q.append(
-                    or_(not_(Video.etc.ilike(search)), not_(Video.dbid.ilike(search)))
-                )
+                if value != '':
+                    search = '%{}%'.format(value)
+                    q_except.append(
+                        or_(Video.etc.ilike(search), Video.dbid.ilike(search))
+                        # or_(not_(Video.etc.ilike(search)), not_(Video.dbid.ilike(search)))
+                    )
         else:
             for value in keyword['etc']:
                 # print(value, 'else')
@@ -170,7 +178,7 @@ def search_video(db: Session, keyword, skip:int=0, limit:int=0):
                     or_(Video.etc.ilike(search), Video.dbid.ilike(search))
                 )
         # _q.append(Video.etc == None)
-        q.append(and_(*_q))
+        q.append(or_(*_q))
 
 
     if 'ad_start' in keyword:
@@ -286,15 +294,28 @@ def search_video(db: Session, keyword, skip:int=0, limit:int=0):
             q.append(Video.family == True)
         elif keyword['family'] == False:
             q.append(Video.family.isnot(True))
-            
-    
+
+
+    _video_list = db.query(Video).filter(and_(*q))
+    dislike_list = db.query(Video).join(video_dislike)  # dislike 추출
+    _video_list = _video_list.except_(dislike_list)     # dislike except
+    if len(q_except) > 0:                               # or_ 빈리스트 입력되면 DB모두 선택 0보다 클경우만 
+        except_list = db.query(Video).filter(or_(*q_except))
+        _video_list = _video_list.except_(except_list)
     if 'vote' in keyword and keyword['vote']:
-        _video_list = db.query(Video).filter(and_(*q)).join(video_voter).order_by(Video.date_posted.desc())
-    elif 'dislike' in keyword and keyword['dislike']:
-        _video_list = db.query(Video).filter(and_(*q)).join(video_dislike).order_by(Video.date_posted.desc())
+        _video_list = _video_list.join(video_voter)
+    if 'dislike' in keyword and keyword['dislike']:
+        _video_list = db.query(Video).join(video_dislike)
+    
+    if 'random' in keyword and keyword['random']:
+        _video_list = _video_list.order_by(func.random())
+        total = _video_list.count()
+        video_list = _video_list.offset(skip).limit(limit).all()
+        print(total)
+        # print(video_list[0].school_uniform, '-3-3-3-3-3-3-')
+        return total, video_list    
         
-    else:
-        _video_list = db.query(Video).filter(and_(*q)).order_by(Video.date_posted.desc())
+    _video_list = _video_list.order_by(Video.date_posted.desc())
     total = _video_list.count()
     video_list = _video_list.offset(skip).limit(limit).all()
     print(total)
