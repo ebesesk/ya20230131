@@ -6,6 +6,12 @@ from databases.realestate import database
 from databases.realestate.models import Apt
 
 
+def get_apt_list(db: Session, _min:int, _max:int):
+    apts = db.query(Apt).filter((
+        Apt.년 * 100 + Apt.월 > _min) & (Apt.년 * 100 + Apt.월 < _max)
+    ).order_by(Apt.법정동, Apt.아파트, Apt.년.desc(), Apt.월.desc(), Apt.일.desc()).all()
+    return apts
+
 
 # df sql로 저장
 def df_to_sql(db: Session, df: DataFrame, table: str):

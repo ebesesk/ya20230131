@@ -5,7 +5,7 @@ import datetime
 from config import settings
 # from database import SessionLocal
 # from models import Apt
-
+from math import ceil
 
 service_key = settings.DATA_GO_KR_SERVICE_KEY
 api = TransactionPrice(service_key)
@@ -65,7 +65,13 @@ class YearMonth:
     #         if ym not in yms_db:
     #             yms_db.append(ym)
     #     return yms_db
-
+class YeartoYms:
+    def __init__(self, _year):
+        self.year = _year
+        self.yms = self.yeartoyms()
+    def yeartoyms(self):
+        now = datetime.datetime.now().strftime('%Y%m')
+        return now
 
 
 def main():

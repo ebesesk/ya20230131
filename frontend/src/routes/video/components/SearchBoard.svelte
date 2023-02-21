@@ -9,7 +9,7 @@ moment.locale('ko')
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
-export let onSearch
+// export let onSearch
 let subject
 let content
 
@@ -110,7 +110,7 @@ function runQuery(_query) {
 <div class="row up">
   <div class="col">
     <div class="input-group input-group-sm pt-1 maker">
-      <p>{query}&nbsp&nbsp&nbsp</p>
+      <p>{query}</p>
       <textarea type="txt" class="form-control-sm"  bind:value={subject} placeholder="제목" rows="1" cols=25 />
       <!-- <textarea class="form-control-sm" bind:value={content} rows="1" cols="38"></textarea> -->
       <textarea class="form-control-sm" bind:value={content} rows="1" cols="38"></textarea>
@@ -127,7 +127,7 @@ function runQuery(_query) {
     <button type="button" class="btn btn-outline-dark subject" on:click={runQuery(question.content)}>
         <b>{question.subject.replace('#쿼리#', '')}</b>
     </button>
-    <span class="badge text-bg-danger bg-sm del" on:click={delete_question(question.id)}>D</span>
+    <button class="badge text-bg-danger bg-sm del" on:click={delete_question(question.id)}>D</button>
   </div>
   {/each}
 </div>  
@@ -139,6 +139,9 @@ function runQuery(_query) {
 
 
 <style>
+.input-group > p {
+  font-size: xx-small;
+}
 textarea {
   font-size: small;
 }
@@ -174,7 +177,7 @@ textarea {
   cursor: pointer;
   
 }
-.badge.del:hover {
-    color: firebrick;
-}
+/* button.badge {
+  font-size: xx-small;
+} */
 </style>

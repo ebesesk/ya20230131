@@ -8,15 +8,15 @@
   import Manga from './routes/manga/Manga.svelte'
   // import Video from './routes/video/Video.svelte'
   import Video from './routes/video/Video.svelte'
-  import Realstate from './routes/Realstate/Realstate.svelte'
+  import Realestate from './routes/realestate/Realestate.svelte'
   
   const routes = {
     '/': Login,
     '/user-create': UserCreate,
     '/manga': Manga,
     // '/video': Video,
-    '/Video': Video,
-    '/Realstate': Realstate,
+    '/video': Video,
+    '/realestate': Realestate,
   }
 
 </script>
