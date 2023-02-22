@@ -31,18 +31,21 @@ def db_update(db: Session=Depends(get_db)):
 
 @router.get("/aptlist", response_model=schema.AptList)
 def get_apt_list_db(db: Session=Depends(get_db),
-                 year: int = 1):
+                    year: int = 1,
+                    _sort: str = 'date'):
     period = year * 12
     yms = util.YearMonth(period)
     _min = int(min(yms.yms))
     _max = int(max(yms.yms))
     # util.year_to_yms(_year)
-    apts = crud.get_apt_list(db=db, _min=_min, _max=_max)
+    apts = crud.get_apt_list(db=db, _min=_min, _max=_max, _sort=_sort)
     dongs = [apt.법정동 for apt in apts]
     dongs = list(set(dongs))
     # apt_names = [apt.아파트 for apt in apts]
     # apt_names = list(set(apt_names))
-    print(dongs)
+    # print(dongs)
+    # for i in apts:
+    #     print(i.__dict__)
     return {
         # 'apt_names': apt_names,
         'dongs': dongs,

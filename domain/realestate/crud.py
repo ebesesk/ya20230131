@@ -6,10 +6,22 @@ from databases.realestate import database
 from databases.realestate.models import Apt
 
 
-def get_apt_list(db: Session, _min:int, _max:int):
+def get_apt_list(db: Session, _min:int, _max:int, _sort:str):
     apts = db.query(Apt).filter((
         Apt.년 * 100 + Apt.월 > _min) & (Apt.년 * 100 + Apt.월 < _max)
-    ).order_by(Apt.법정동, Apt.아파트, Apt.년.desc(), Apt.월.desc(), Apt.일.desc()).all()
+    )
+    if _sort == 'date':
+        apts = apts.order_by(Apt.년.desc(), Apt.월.desc(), Apt.일.desc(), Apt.법정동,Apt.아파트).all()
+    
+    if _sort == 'price':
+        apts = apts.order_by(Apt.거래금액.desc(), Apt.년.desc(), Apt.월.desc(), Apt.일.desc(), Apt.법정동,Apt.아파트).all()
+    
+    if _sort == 'area':
+        apts = apts.order_by(Apt.전용면적.desc(), Apt.년.desc(), Apt.월.desc(), Apt.일.desc(), Apt.법정동,Apt.아파트).all()
+    
+    if _sort == 'construction':
+        apts = apts.order_by(Apt.건축년도.desc(), Apt.년.desc(), Apt.월.desc(), Apt.일.desc(), Apt.법정동,Apt.아파트).all()
+    
     return apts
 
 
