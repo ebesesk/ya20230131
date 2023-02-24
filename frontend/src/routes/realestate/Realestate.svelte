@@ -65,6 +65,7 @@
   function viewAll() {
     isDong = false
     isApt = false
+    aptNames = ""
   }
   
   let isDong = false
@@ -73,44 +74,16 @@
   let aptNames = []
   let _viewDong 
   let _viewApt
-
-  function sortPrice() {
-    apts.sort((a,b) => {
-      if(Number(a.가격) > Number(b.가격)) return 1
-      if(Number(a.가격) < Number(b.가격)) return -1
-      return 0
-    })
-
-    // apts.sort(function(a, b) {
-    //   return a.가격 < b.가격 ? -1 : a.가격 > b.가격 ? 1 : 0
-    // })
-    // apts.sort(가격)
-
-    // apts.sort(function (a, b) {
-    //   if (a.가격 > b.가격) {
-    //     return 1
-    //   }
-    //   if (a.가격 < b.가격) {
-    //     return -1
-    //   }
-    //   return 0
-    // })
-
-    // apts = apts.sort((a, b) => a.가격 - b.가격)
-    
-    console.log(apts)
-    return apts
-  }
-
   let _sort
-//  $:apts
+
+  getAptsList(_year = 1, _sort = 'price')
 </script>
 
 <div class="container-fluid">
   
   
   <div class="row">
-    <div class="col yms_dn text-sm-end">
+    <div class="col-5 yms_dn text-sm-end">
       <span>{#each yms_dn as yms}{yms},&nbsp{/each}</span>
     <button class="badge text-bg-light" on:click={update_realestate}>update</button>
    </div>
@@ -158,8 +131,8 @@
   <div class="col apt-info">
     {#each apts as apt}
       {#if apt.년 && isDong === false && isApt === false}
-        {apt.년}{apt.월.toString().padStart(2,'0')}{apt.일.toString().padStart(2,'0')}
-        {apt.도로명}
+      <b>{apt.년}<span class="text-primary">{apt.월.toString().padStart(2,'0')}</span><span class="text-success">{apt.일.toString().padStart(2,'0')}</span></b>
+        <!-- {apt.도로명} -->
         {apt.법정동}
         <!-- {apt.지번} -->
         <span class="text-danger">{apt.아파트}</span>
@@ -172,7 +145,7 @@
         <!-- {apt.년}년 -->
         <!-- {apt.월}월 -->
         <!-- {apt.일}일 -->
-        {apt.도로명}
+        <!-- {apt.도로명} -->
         {apt.법정동}
         <!-- {apt.지번} -->
         <span class="text-danger">{apt.아파트}</span>
@@ -185,7 +158,7 @@
         <!-- {apt.년}년 -->
         <!-- {apt.월}월 -->
         <!-- {apt.일}일 -->
-        {apt.도로명}
+        <!-- {apt.도로명} -->
         {apt.법정동}
         <!-- {apt.지번} -->
         <span class="text-danger">{apt.아파트}</span>
@@ -209,12 +182,15 @@
  }
  .form-select {
    height: 30px;
-   font-size: xx-small;
+   font-size: small;
  }
   .container-fluid {
-    font-size: smaller;
+    font-size: small;
   }
   .col.apt-info {
-    font-size: smaller;
+    font-size: small;
+  }
+  .badge {
+    font-size: small;
   }
 </style>

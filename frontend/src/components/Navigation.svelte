@@ -24,6 +24,9 @@
       <ul class="navbar-nav">
         {#if $is_login}
         <li class="nav-item">
+          <a use:link class="nav-link" aria-current="page" href="/worked">출근부</a>
+        </li>
+        <li class="nav-item">
           <a use:link class="nav-link" aria-current="page" href="/realestate">부동산</a>
         </li>
 

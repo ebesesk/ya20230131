@@ -9,6 +9,7 @@
   // import Video from './routes/video/Video.svelte'
   import Video from './routes/video/Video.svelte'
   import Realestate from './routes/realestate/Realestate.svelte'
+  import Worked from './routes/worked/Worked.svelte'
   
   const routes = {
     '/': Login,
@@ -17,6 +18,7 @@
     // '/video': Video,
     '/video': Video,
     '/realestate': Realestate,
+    '/worked': Worked
   }
 
 </script>
