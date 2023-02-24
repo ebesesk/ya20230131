@@ -41,6 +41,18 @@ answer_voter = Table(
     Column('answer_id', Integer, ForeignKey('answer.id'), primary_key=True)
 )
 
+class Worked(Base):
+    __tablename__='worked'
+    
+    id = Column(Integer, primary_key=True)
+    year = Column(Integer, nullable=False)
+    month = Column(Integer, nullable=False)
+    day = Column(Integer, nullable=False)
+    note = Column(String, nullable=False)
+    create_date = Column(DateTime, nullable=False)
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    user = relationship("User", backref="worked_users")
+    
 
 class Question(Base):
     __tablename__ = "question"

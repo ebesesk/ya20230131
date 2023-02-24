@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status 
 
-from . import schema, crud, schema, crud
+from . import schema, crud
 from ..login.login_router import get_current_user
 
 from database import get_db, get_async_db
