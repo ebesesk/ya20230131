@@ -1,5 +1,6 @@
 from sqlalchemy import (Column, Integer, String, Text, DateTime, 
-                        ForeignKey, Boolean, Date, Table, MetaData)
+                        ForeignKey, Boolean, Date, Table, MetaData,
+                        PrimaryKeyConstraint, UniqueConstraint)
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from database import Base
@@ -52,7 +53,9 @@ class Worked(Base):
     create_date = Column(DateTime, nullable=False)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     user = relationship("User", backref="worked_users")
-    
+    __table_args__ = (
+        UniqueConstraint('year', 'month', 'day', 'user_id'),
+    )
 
 class Question(Base):
     __tablename__ = "question"

@@ -8,7 +8,7 @@ from databases.realestate.models import Apt
 
 def get_apt_list(db: Session, _min:int, _max:int, _sort:str):
     apts = db.query(Apt).filter((
-        Apt.년 * 100 + Apt.월 > _min) & (Apt.년 * 100 + Apt.월 < _max)
+        Apt.년 * 100 + Apt.월 > _min) & (Apt.년 * 100 + Apt.월 <= _max)
     )
     if _sort == 'date':
         apts = apts.order_by(Apt.년.desc(), Apt.월.desc(), Apt.일.desc(), Apt.법정동,Apt.아파트).all()

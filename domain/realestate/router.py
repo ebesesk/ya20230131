@@ -38,6 +38,7 @@ def get_apt_list_db(db: Session=Depends(get_db),
     _min = int(min(yms.yms))
     _max = int(max(yms.yms))
     # util.year_to_yms(_year)
+    print('min: ', _min, 'max: ', _max)
     apts = crud.get_apt_list(db=db, _min=_min, _max=_max, _sort=_sort)
     dongs = [apt.법정동 for apt in apts]
     dongs = list(set(dongs))

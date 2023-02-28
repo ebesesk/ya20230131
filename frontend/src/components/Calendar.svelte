@@ -1,173 +1,207 @@
 <script>
-	const date = new Date();
-	
-	const today = {
-		dayNumber: date.getDate(),
-		month: date.getMonth(),
-		year: date.getFullYear(),
-	}
-	
-	const monthNames = [ "January1", "February2", "March3", "April4", "May5", "June6", "July7", "August8", "September9", "October10", "November11", "December12"];
-	let monthIndex = date.getMonth();
-	// const currentMonth = date.toLocaleString('en-US', { month: 'long' })
-	$: month = monthNames[monthIndex];
-	
-	let year = date.getFullYear();
-	
-	$: firstDayIndex = new Date(year, monthIndex, 1).getDay();
-	// const currentDay = date.getDate();
-	$: numberOfDays = new Date(year, monthIndex+1, 0).getDate();
-	
-	$: calendarCellsQty = numberOfDays + firstDayIndex;
-	
-	const goToNextMonth = () => {
-		if (monthIndex >= 11) {
-			year += 1;
-			return monthIndex = 0;
-		}
-		return monthIndex += 1;
-	}
-	
-	const goToPrevMonth = () => {
-		if (monthIndex <= 0) {
-			year -= 1;
-			return monthIndex = 11;
-		}
-		return monthIndex -= 1;
-	}
-	
-	$: console.log(`${month}, ${today.dayNumber}, ${year}, FIRST DAY index is ${firstDayIndex}, MONTH index is ${monthIndex}, No. of days: ${numberOfDays}`)
+  import {createEventDispatcher, onMount} from 'svelte';
+  export var headers = [];
+  export let days = [];
+  export let items = [];
+    
+  let dispatch = createEventDispatcher();
+    
 </script>
-
-
-	<div class="month">
-		<ul>
-			<li class="prev" >
-				<button class="btn" on:click={goToPrevMonth}>&#10094;</button>
-		    </li>
-			<li class="next" >
-				<button class="btn" on:click={goToNextMonth}>&#10095;</button>
-			</li>
-			
-			<li>{month}<br>
-				<span style="font-size:18px">{year}</span>
-			</li>
-		</ul>
-	</div>
-
-	<ul class="weekdays">
-		<li>Su</li>
-		<li>Mo</li>
-		<li>Tu</li>
-		<li>We</li>
-		<li>Th</li>
-		<li>Fr</li>
-		<li>Sa</li>
-	</ul>
-
-	<ul class="days">
-		{#each Array(calendarCellsQty) as _, i}
-			{#if i < firstDayIndex || i >= numberOfDays+firstDayIndex  }
-				<li>&nbsp;<br></li>
-			{:else}
-				<li class="{year.toString()}{
-					(monthIndex + 1).toString().padStart(2,'0')}{((i - firstDayIndex) + 1).toString().padStart(2,'0')}" 
-					class:active={i === today.dayNumber+(firstDayIndex-1) &&
-					monthIndex === today.month &&
-					year === today.year}>
-					{(i - firstDayIndex) + 1}<br>
-				</li>
-			{/if}
-		{/each}
-	</ul>
-
-
-				
-<style>
-	ul {list-style-type: none;}
-
-	/* Month header */
-	.month {
-		/* padding: 70px 25px; */
-		padding: 10px 3px;
-		width: auto;
-		background: #1abc9c;
-		text-align: center;
-	}
-
-	/* Month list */
-	.month ul {
-		margin: 0;
-		padding: 0;
-	}
-
-	.month ul li {
-		color: white;
-		font-size: 20px;
-		text-transform: uppercase;
-		letter-spacing: 3px;
-	}
-
-	/* Previous button inside month header */
-	.month .prev {
-		float: left;
-		padding-top: 10px;
-		cursor: pointer;
-	}
-
-	/* Next button */
-	.month .next {
-		float: right;
-		padding-top: 10px;
-		cursor: pointer;
-	}
-
-	/* Weekdays (Mon-Sun) */
-	.weekdays {
-		margin: 0;
-		padding: 3px 0;
-		background-color:#ddd;
-	}
-
-	.weekdays li {
+<div class="calendar">
+  {#each headers as header}
+  <span class="day-name" on:click={()=>dispatch('headerClick',header)}>{header}</span>
+  {/each}
+    {#each days as day}
+	  {#if day.enabled}
+	    <span class="day" on:click={()=>dispatch('dayClick',day)}>{day.name}</span>
+		  {:else}
+		<span class="day day-disabled" on:click={()=>dispatch('dayClick',day)}>{day.name}</span>
+		{/if}
+	{/each}
 		
-		display: inline-block;
-		/* width: 13.6%; */
-		width: 13%;
-		color: #666;
-		text-align: center;
-		font-size: 0.9rem;
-	}
+	{#each items as item}
+		<section
+			on:click={()=>dispatch('itemClick',item)} 
+			class="task {item.className}"
+      style="grid-column: {item.startCol} / span {item.len};      
+      grid-row: {item.startRow};  
+      align-self: {item.isBottom?'end':'center'};"
+			>
+			{item.title}
+			{#if item.detailHeader}
+			<div class="task-detail">
+				<h2>{item.detailHeader}</h2>
+				<p>{item.detailContent}</p>
+			</div>
+			{/if}
+		</section>
+	{/each}
+</div>
 
-	/* Days (1-31) */
-	.days {
-		margin: 0;
-		padding: 3px 0;
-		/* padding: 10px 0; */
-		background: #eee;
 
-	}
+<style>
+.calendar {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(7, minmax(120px, 1fr));
+  grid-template-rows: 50px;
+  grid-auto-rows: 120px;
+  overflow: auto;
+}
+.day {
+  border-bottom: 1px solid rgba(166, 168, 179, 0.12);
+  border-right: 1px solid rgba(166, 168, 179, 0.12);
+  text-align: right;
+  padding: 14px 20px;
+  letter-spacing: 1px;
+  font-size: 14px;
+  box-sizing: border-box;
+  color: #98a0a6;
+  position: relative;
+  z-index: 1;
+}
+.day:nth-of-type(7n + 7) {
+  border-right: 0;
+}
+.day:nth-of-type(n + 1):nth-of-type(-n + 7) {
+  grid-row: 1;
+}
+.day:nth-of-type(n + 8):nth-of-type(-n + 14) {
+  grid-row: 2;
+}
+.day:nth-of-type(n + 15):nth-of-type(-n + 21) {
+  grid-row: 3;
+}
+.day:nth-of-type(n + 22):nth-of-type(-n + 28) {
+  grid-row: 4;
+}
+.day:nth-of-type(n + 29):nth-of-type(-n + 35) {
+  grid-row: 5;
+}
+.day:nth-of-type(n + 36):nth-of-type(-n + 42) {
+  grid-row: 6;
+}
+.day:nth-of-type(7n + 1) {
+  grid-column: 1/1;
+}
+.day:nth-of-type(7n + 2) {
+  grid-column: 2/2;
+}
+.day:nth-of-type(7n + 3) {
+  grid-column: 3/3;
+}
+.day:nth-of-type(7n + 4) {
+  grid-column: 4/4;
+}
+.day:nth-of-type(7n + 5) {
+  grid-column: 5/5;
+}
+.day:nth-of-type(7n + 6) {
+  grid-column: 6/6;
+}
+.day:nth-of-type(7n + 7) {
+  grid-column: 7/7;
+}
+.day-name {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #e9a1a7;
+  text-align: center;
+  border-bottom: 1px solid rgba(166, 168, 179, 0.12);
+  line-height: 50px;
+  font-weight: 500;
+}
+.day-disabled {
+  color: rgba(152, 160, 166, 0.5);
+  background-color: #ffffff;
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fdf9ff' fill-opacity='1' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+  cursor: not-allowed;
+}
 
-	.days li {
-		list-style-type: none;
-		display: inline-block;
-		border: 1px solid black;
-		padding: 3px;
-		margin: 1px;
-		/* padding: 9px; */
-		width: 13.6%;
-		/* width: 11.6%; */
-		text-align: center;
-		/* margin-bottom: 1px; */
-		font-size: 1.2rem;
-		color: #777;
-		cursor: pointer;
-	}
+.task {
+  border-left-width: 3px;
+  padding: 8px 12px;
+  margin: 10px;
+  border-left-style: solid;
+  font-size: 14px;
+  position: relative;
+  align-self: center;
+	z-index:2;
+	border-radius: 15px;
+}
+.task--warning {
+  border-left-color: #fdb44d;
+  background: #fef0db;
+  color: #fc9b10;
+  margin-top: -5px;
+}
+.task--danger {
+  border-left-color: #fa607e;
+  grid-column: 2 / span 3;
+  grid-row: 3;
+  margin-top: 15px;
+  background: rgba(253, 197, 208, 0.7);
+  color: #f8254e;
+}
+.task--info {
+  border-left-color: #4786ff;
+  margin-top: 15px;
+  background: rgba(218, 231, 255, 0.7);
+  color: #0a5eff;
+}
+.task--primary {
+  background: #4786ff;
+  border: 0;
+  border-radius: 14px;
+  color: #f00;
+  box-shadow: 0 10px 14px rgba(71, 134, 255, 0.4);
+}
+.task-detail {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  background: #efe;
+  border: 1px solid rgba(166, 168, 179, 0.2);
+  color: #100;
+  padding: 20px;
+  box-sizing: border-box;
+  border-radius: 14px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  z-index: 2;
+}
+.task-detail:after, .task-detail:before {
+  bottom: 100%;
+  left: 30%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+.task-detail:before {
+  border-bottom-color: rgba(166, 168, 179, 0.2);
+  border-width: 8px;
+  margin-left: -8px;
+}
+.task-detail:after {
+  border-bottom-color: #fff;
+  border-width: 6px;
+  margin-left: -6px;
+}
+.task-detail h2 {
+  font-size: 15px;
+  margin: 0;
+  color: #91565d;
+}
+.task-detail p {
+  margin-top: 4px;
+  font-size: 12px;
+  margin-bottom: 0;
+  font-weight: 500;
+  color: rgba(81, 86, 93, 0.7);
+}
 
-	/* Highlight the "current" day */
-	.active {
-		padding: 5px;
-		background: #1abc9c;
-		color: white !important
-	}
 </style>
+
+

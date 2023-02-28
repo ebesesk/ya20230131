@@ -76,7 +76,7 @@
   let _viewApt
   let _sort
 
-  getAptsList(_year = 1, _sort = 'price')
+  getAptsList(_year = 1, _sort = 'date')
 </script>
 
 <div class="container-fluid">
