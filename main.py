@@ -8,12 +8,7 @@ from domain import base_router
 app = FastAPI()
 
 # origins = ["http://192.168.0.43:7443","http://191.168.0.43:7080"]
-origins = [
-    "http://192.168.0.43:7443", 
-    "http://191.168.0.43:7080",
-    "https://api.ebesesk.synology.me",
-    "https://ya2.ebesesk.synology.me"
-]
+origins = ["http://192.168.0.43:7443", "http://191.168.0.43:7080"]
 # origins = []
 
 app.add_middleware(

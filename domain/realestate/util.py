@@ -50,7 +50,6 @@ class YearMonth:
                 month = 12
                 year -= 1
         period.sort(reverse=False)
-        print(period)
         return period
     # def __get_yms(self):
         #     yms = self.__get_period()[:-self.__n]
@@ -85,7 +84,6 @@ def main():
     now_yms.sort(reverse=False)
     start_year_month = yms.now_yms[0]
     end_year_month = yms.now_yms[-1]
-    print(start_year_month, end_year_month)
     con = sqlite3.connect("d:/lang/jupyter-notebook/realestate/realestate.db")
     for year_month in yms.yms:
         df = get_data(gubun=gubun, 
@@ -103,7 +101,6 @@ def main():
         end_year_month=end_year_month,
         verbose=True,
     )
-    
     return df  
 
 
