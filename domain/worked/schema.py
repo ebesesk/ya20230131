@@ -9,21 +9,23 @@ class Worked(BaseModel):
     year: int
     month: int
     day: int
-    note: str
+    note: str|None = None
+    wage: str|None = None
     create_date: datetime.datetime
     user: User
     class Config:
         orm_mode = True
 
 class WorkedNote(BaseModel):
-    note: str
+    note: str|None = None
         
 class WorkedCreate(BaseModel):
     # date: datetime.date
     year: int
     month: int
     day: int
-    note: str
+    note: str|None = None
+    wage: str|None = None
     @validator('year', 'month', 'day')
     def not_empty(cls, v):
         if not v or not str(v).strip():
@@ -34,7 +36,7 @@ class WorkedList(BaseModel):
     worked_list: list[Worked] = []
     
 class WorkedUpdate(WorkedCreate):
-    worked_id: int|None = None
+    worked_id: int
 
 class WorkedDelete(BaseModel):
     worked_id: int

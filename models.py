@@ -53,6 +53,7 @@ class Worked(Base):
     create_date = Column(DateTime, nullable=False)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     user = relationship("User", backref="worked_users")
+    wage = Column(Integer, nullable=True)
     __table_args__ = (
         UniqueConstraint('year', 'month', 'day', 'user_id'),
     )

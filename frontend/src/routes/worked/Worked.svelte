@@ -53,6 +53,7 @@
   let workedDays = []
   let workedPlaces = []
   let workedPlacesSelect = workedPlaces
+  
   function search_worked(year, monthIndex) {
     //   console.log(year)
 	//   console.log(monthIndex+1)
@@ -85,30 +86,6 @@
 	}
   }
   $: getWorkedDays(workedPlacesSelect), workedPlacesSelect
-  //   const keywords = () => {
-	  // 	fastapi('get', '/api/worked/keywords', {}, (json) => {
-		  // 		// console.log(json)
-		  // 		// keywords = json.keywords
-		  // 		// console.log(keywords)
-		  // 		return json.keywords
-		  // 	})
-		  //   }
-		  //   let keywords
-		  //   get_keywords()
-		  
-		  
-		  // let workedDay = []
-		  // function getIsWorked(year, month, day) {
-			  // 	let workedDays = []
-			  // 	for (let i = 0; i < worked_list.length; i++) {
-				  // 		console.log(worked_list[i])
-				  // 		// workedDay = worked_list[i].year * 10000 + worked_list[i].month * 100 + worked_list[i].day
-				  // 		// workedDays.push(workedDay)
-				  // 	}
-				  // 	// console.log(workedDays)
-				  // 	// isWorked = workedDays.indexOf(year*10000+(month)*100+(day)) 
-				  // 	// return isWorked
-				  // }
   $: search_worked(year, monthIndex)
   
   function get_noteInfo(year, month, day) {
@@ -135,7 +112,6 @@
 	)
   }
 
-  let note
   let yearInfo
   let monthInfo
   let dayInfo
@@ -231,23 +207,34 @@
 	{/each}
   </div>
   <div class="row check-input">
-    <div class="col">
-	  total: {workedDays.length}
-	</div>
     {#each workedPlaces as workedPlace}
     <div class="col form-check">
-	  <input class="form-check-input" type="checkbox" value="{workedPlace}" bind:group={workedPlacesSelect} id="flexCheckDefault" >
-	  <label class="form-check-label" for="flexCheckDefault" >
-	    {workedPlace}
-	  </label>
+      <input class="form-check-input" type="checkbox" value="{workedPlace}" bind:group={workedPlacesSelect} id="flexCheckDefault" >
+      <label class="form-check-label" for="flexCheckDefault" >
+        {workedPlace}
+      </label>
     </div>
-	{/each}
+    {/each}
   </div>
-  <!-- {workedPlacesSelect} -->
-				 
+  <div class="row total">
+    <div class="col">
+      total: {workedDays.length}
+    </div>
+    <!-- {workedPlacesSelect} -->
+  </div>
+
+  
+
 <style>
+  .row.total {
+    padding-left: 10px;
+    padding-right: 10px;
+		margin: 2px;
+  }
 	.row.check-input {
-		padding: auto;
+		
+    padding-left: 20px;
+    padding-right: 20px;
 		margin: 2px;
 	}
 	ul {

@@ -62,7 +62,7 @@ def worked_update(_worked_update: schema.WorkedUpdate,
     db_worked = crud.get_worked_ymd(db=db, 
                                     year=_worked_update.year, 
                                     month=_worked_update.month, 
-                                    day=_worked_update.day, 
+                                    day=_worked_update.day,
                                     user=current_user)
     if not db_worked:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
@@ -70,8 +70,9 @@ def worked_update(_worked_update: schema.WorkedUpdate,
     if current_user.id != db_worked.user.id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="수정 권한이 없습니다.")
-    crud.update_worked(db=db, db_worked=db_worked,
-                                  worked_update=_worked_update)
+    crud.update_worked(db=db, 
+                       db_worked=db_worked,
+                       worked_update=_worked_update)
     
 @router.delete("/delete", status_code=status.HTTP_204_NO_CONTENT)
 def worked_delete(_worked_delete: schema.WorkedDelete,
@@ -118,5 +119,10 @@ def worked_detail(year: int,
                                  day=day, 
                                  user=current_user)
     if not worked:
-        return {'note': ''} 
+        return {'note': ''}
+    if not worked.wage:
+        print(worked.note, worked.wage, '-----------------------')
+        worked.wage = crud.get_wage(db=db, year=year, month=month, day=day, note=worked.note, user=current_user)
+    print(worked.wage, '====================')
+             
     return {'note': worked.note}
