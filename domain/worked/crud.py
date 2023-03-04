@@ -61,19 +61,19 @@ def get_worked_ymd(db: Session, year: int, month: int, day: int, user:User):
 
 def get_wage(db: Session, year: int, month: int, day: int, note: str, user:User):
     worked = db.query(Worked).filter(and_(
-                                     (Worked.year*10000 + Worked.month*100 + Worked.day) < (year*10000 + month*100 + day) ,
-                                     Worked.user_id==user.id, 
-                                     Worked.note == note
-                                     )).order_by(Worked.create_date.desc()).first()
+                                          Worked.date < (year*10000 + month*100 + day) ,
+                                          Worked.user_id==user.id, 
+                                          Worked.note == note,
+                                          Worked.wage.isnot(None),
+                                          )).order_by(Worked.create_date.desc()).first()
     if worked == None:
-        worked = db.query(Worked).filter(and_(#Worked.year <= year,
-                                              #Worked.month <= month,
-                                              #Worked.day < day,
-                                              Worked.date < (year*10000 + month*100 + day),
+        worked = db.query(Worked).filter(and_(
+                                              Worked.date <= (year*10000 + month*100 + day),
+                                              Worked.date >= (year*10000 + (month-6)*100 + day),
                                               Worked.user_id==user.id, 
-                                              Worked.wage.is_not(None),
+                                              Worked.wage.isnot(None),
                                               )).order_by(Worked.create_date.desc()).first()
     if worked == None:
         return None
-    print(worked.user.username, worked.wage, '+++++++++++++++++')
+    print(worked.user.username, worked.wage, worked.create_date, '+++++++++++++++++')
     return worked.wage
