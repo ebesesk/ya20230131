@@ -49,6 +49,8 @@ class Worked(Base):
     month = Column(Integer, nullable=False)
     day = Column(Integer, nullable=False)
     note = Column(String, nullable=False)
+    wage = Column(String, nullable=True)
+    date = Column(Integer, nullable=True)
     create_date = Column(DateTime, nullable=False)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     user = relationship("User", backref="worked_users")
