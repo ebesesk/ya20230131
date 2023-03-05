@@ -1,6 +1,6 @@
 <script>
     import fastapi from "../../lib/api";
-  //   import { workedKeywords } from "../../lib/store";
+    //   import { workedKeywords } from "../../lib/store";
     import { onMount } from "svelte";
     import Error from "../../components/Error.svelte"
     export let yearInfo
@@ -11,11 +11,12 @@
     export let keywords = []
     export let workedDayInfo = []
     let noteInfo2
-  //   get_note(yearInfo, monthInfo, dayInfo)
-  //   export search_worked
+    //   get_note(yearInfo, monthInfo, dayInfo)
+    //   export search_worked
     let error = {detail:[]}
-    let note = ''
-  
+    let note //= noteInfo
+    let wage //= wageInfo
+    
   //   console.log(yearInfo, monthInfo, dayInfo, noteInfo, '00000')
     
     function del_worked() {
@@ -81,7 +82,6 @@
       )
     }
   
-    let wage
   
   </script>
   
@@ -102,7 +102,7 @@
     {#if workedDayInfo.includes((yearInfo*10000 + monthInfo*100 + dayInfo).toString())}
     <div class="input-group align-middle">
       <span class="inupt-group-txt">&nbsp;일한곳</span>
-      <input class="form-control form-control-sm" bind:value={note} type="text" placeholder="{noteInfo}" aria-label=".form-control-sm example" maxlength=5 size=5>
+      <input class="form-control form-control-sm" bind:value={note} type="text" placeholder="{noteInfo}"  aria-label=".form-control-sm example" maxlength=5 size=5>
       <span class="inupt-group-txt">&nbsp;일급여</span>
       <input class="form-control form-control-sm" bind:value={wage} type="number" placeholder="{wageInfo}" aria-label=".form-control-sm example" maxlength=6 size=6>
     </div>

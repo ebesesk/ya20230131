@@ -50,8 +50,8 @@
   
   
 	let worked_list = []
-  let workedDayInfo = []
-	let workedDays = []
+  let workedDays = []
+  let workedList = []
 	let workedPlaces = []
 	let workedPlacesSelect = workedPlaces
 	
@@ -64,7 +64,7 @@
 	  }
 	  fastapi('get', '/api/worked/list', params, (json) => {
 		worked_list = json.worked_list
-		workedDays = [] 
+    workedDays = [] 
 		workedPlaces = []
     workedDayInfo = []
 		for (let i = 0; i < worked_list.length; i++) {
@@ -76,12 +76,13 @@
 			  workedPlaces.push(worked_list[i].note)
 		  }
 		}
-    console.log(workedDays)
-	  console.log(worked_list)
+    // console.log(workedDays)
+	  // console.log(worked_list)
 	  })
 	}
 	function getWorkedDays(workedPlacesSelect) {
 	  workedDays = []
+    workedList = []
 	  for (let i = 0; i < worked_list.length; i++) {
 		  console.log(worked_list[i])
       // let workedDay = (worked_list[i].year*10000 + worked_list[i].month*100 + worked_list[i].day).toString()
@@ -89,6 +90,7 @@
 		  if (workedPlacesSelect.includes(worked_list[i].note)){
 		    let workedDay = (worked_list[i].year*10000 + worked_list[i].month*100 + worked_list[i].day).toString()
 		    workedDays.push(workedDay)
+        workedList.push(worked_list[i])
 		  }
 	  }
     console.log(workedDays)
@@ -103,7 +105,7 @@
 		day: day
 	  }
 	  fastapi('get', '/api/worked/detail', params, (json) => {
-      console.log(json)
+      // console.log(json)
       noteInfo = json.note
       wageInfo = json.wage
       //   return json.note
@@ -121,23 +123,22 @@
 		}
 	  )
 	}
-  
+
+  let workedDayInfo = []
 	let yearInfo
 	let monthInfo
 	let dayInfo
 	let noteInfo 
 	let wageInfo 
-  //   let note
 	let keywords = []
 	function exportInfoData(year, month, day) {
-	  // get_keywords()  
 	  get_NoteWage(year, month, day)
 	  get_keywords()
   
 	  yearInfo = year
 	  monthInfo = month
 	  dayInfo = day
-	  console.log(yearInfo, monthInfo, dayInfo, noteInfo, wageInfo, keywords)
+	  // console.log(yearInfo, monthInfo, dayInfo, noteInfo, wageInfo, keywords)
 	  // console.log(day)
 	  // console.log(worked)
 	  // get_noteInfo(yearInfo, monthInfo, dayInfo)
@@ -145,9 +146,35 @@
 	  //   get_worked(yearInfo, monthInfo, dayInfo)
 	  //   noteInfo
 	}
-  
+
 	  // $: console.log(`${month}, ${today.dayNumber}, ${year}, FIRST DAY index is ${firstDayIndex}, MONTH index is ${monthIndex}, No. of days: ${numberOfDays}`)
-  </script>
+  // 작업별 임금 
+  
+  // function totalList(workedDays) {
+  //   console.log(workedDays)
+  //   wageList = []
+  //   for (let i=0; i<worked_list.length; i++) {
+  //     if (!workedDays.includes(worked_list[i].date.toString())) {
+  //       console.log(worked_list[i])
+  //       wageList.push(worked_list[i].date)
+  //     }
+  //   }
+  //   console.log(wageList)
+  //   return wageList
+  // }
+  function sumWage(workedlist) {
+    let wages = 0
+    console.log(workedPlaces)
+    for (let i=0; i<workedPlaces.length; i++) {
+      let wagelist = workedlist.filter(v => v.wage && v.note===workedPlaces[i])
+      for (let i=0; i<wagelist.length; i++) {
+        let w = wagelist[i].wage * (workedlist.filter(v => ((v.note === wagelist[i].note) && !v.wage && (v.date > wagelist[i].date))).length + 1)
+        wages = wages + w
+      }
+    }
+    return wages.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  }
+</script>
   
   
   
@@ -157,68 +184,68 @@
   </Modal2>
   
   <div class="month">
-	<ul>
-	  <li class="prev" >
-		<button class="btn" on:click={goToPrevMonth}>&#10094;</button>
-	  </li>
-	  <li class="next" >
-		<button class="btn" on:click={goToNextMonth}>&#10095;</button>
-	  </li>
-	  <li>{month}<br>
-		<span style="font-size:18px">{year}</span>
-	  </li>
-	</ul>
+    <ul>
+      <li class="prev" >
+      <button class="btn" on:click={goToPrevMonth}>&#10094;</button>
+      </li>
+      <li class="next" >
+      <button class="btn" on:click={goToNextMonth}>&#10095;</button>
+      </li>
+      <li>{month}<br>
+      <span style="font-size:18px">{year}</span>
+      </li>
+    </ul>
   </div>
   
   <div class="row weekdays">
-	<div class=col>Su</div>
-	<div class=col>Mo</div>
-	<div class=col>Tu</div>
-	<div class=col>We</div>
-	<div class=col>Th</div>
-	<div class=col>Fr</div>
-	<div class=col>Sa</div>
+    <div class=col>Su</div>
+    <div class=col>Mo</div>
+    <div class=col>Tu</div>
+    <div class=col>We</div>
+    <div class=col>Th</div>
+    <div class=col>Fr</div>
+    <div class=col>Sa</div>
   </div>
   
   <div class="row days">
-	{#each Array(calendarCellsQty) as _, i}
-	{#if i < firstDayIndex || i >= numberOfDays+firstDayIndex  }
-	  <li>&nbsp;<br></li>
-	{:else}
-	  <li class:worked={
-			workedDays.includes((year*10000 + (monthIndex + 1)*100 + ((i - firstDayIndex) + 1)).toString())
-		  }
-		class:active={i === today.dayNumber+(firstDayIndex-1) &&
-		monthIndex === today.month &&
-		year === today.year}>
-		  <!-- {(i - firstDayIndex) + 1} -->
-		  <button 
-			class="btn btn-sm" 
-			on:click={exportInfoData(year, monthIndex+1, (i - firstDayIndex) + 1)}
-			data-bs-toggle="modal" 
-			data-bs-target="#Modal"
-			>  
-			{(i - firstDayIndex) + 1}
-			<br>
-			{#each worked_list as worked}
-			{#if 
-			  worked.year === year && 
-        worked.month === (monthIndex+1) &&                            
-			  worked.day === ((i - firstDayIndex) + 1) && 
-			  workedDays.includes((worked.year*10000 + worked.month*100 + worked.day).toString())
-        }  <!--일한날 포함 여부 확인 -->
-			<!-- {#if worked.day === ((i - firstDayIndex) + 1) && worked.year === year && worked.month === (monthIndex+1)} -->
-				{worked.note}<br>
-        {#if worked.wage}
-          {worked.wage.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+	  {#each Array(calendarCellsQty) as _, i}
+	  {#if i < firstDayIndex || i >= numberOfDays+firstDayIndex  }
+	    <li>&nbsp;<br></li>
+	  {:else}
+      <li class:worked={
+            workedDays.includes((year*10000 + (monthIndex + 1)*100 + ((i - firstDayIndex) + 1)).toString())
+          }
+        class:active={i === today.dayNumber+(firstDayIndex-1) &&
+        monthIndex === today.month &&
+        year === today.year}>
+        <!-- {(i - firstDayIndex) + 1} -->
+        <button 
+        class="btn btn-sm" 
+        on:click={exportInfoData(year, monthIndex+1, (i - firstDayIndex) + 1)}
+        data-bs-toggle="modal" 
+        data-bs-target="#Modal"
+        >  
+        {(i - firstDayIndex) + 1}
+        <br>
+        {#each worked_list as worked}
+        {#if 
+          worked.year === year && 
+          worked.month === (monthIndex+1) &&                            
+          worked.day === ((i - firstDayIndex) + 1) && 
+          workedDays.includes((worked.year*10000 + worked.month*100 + worked.day).toString())
+          }  <!--일한날 포함 여부 확인 -->
+        <!-- {#if worked.day === ((i - firstDayIndex) + 1) && worked.year === year && worked.month === (monthIndex+1)} -->
+          {worked.note}<br>
+          {#if worked.wage}
+            {worked.wage.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+          {/if}
         {/if}
-			{/if}
-			{/each}
-		  </button>
-	  </li>
-	  <!-- <li class:active={i === today.dayNumber+(firstDayIndex-1) && monthIndex === today.month && year === today.year}>
-		{(i - firstDayIndex) + 1}<br>
-	  </li> -->
+        {/each}
+        </button>
+      </li>
+      <!-- <li class:active={i === today.dayNumber+(firstDayIndex-1) && monthIndex === today.month && year === today.year}>
+      {(i - firstDayIndex) + 1}<br>
+      </li> -->
 	  {/if}
 	  {/each}
 	</div>
@@ -234,7 +261,23 @@
 	</div>
 	<div class="row total">
 	  <div class="col">
-		total: {workedDays.length}
+		total: {worked_list.length} {sumWage(worked_list)}
+    {#if workedList.length === 0}
+      <!-- {worked_list.length}{workedPlaces} -->
+      {#each workedPlaces as wps}
+      <br>{wps}:  {#each worked_list.filter(v => v.wage && v.note === wps) as w}
+                  {w.wage} * {worked_list.filter(v => (v.note === w.note) && !v.wage && (v.date > w.date)).length + 1} = {(w.wage * (worked_list.filter(v => v.note === w.note && !v.wage && v.date > w.date).length + 1)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                  {/each}
+      {/each}
+    {:else}
+      {#each workedPlacesSelect as wps}
+        <br>
+        {wps}: {#each workedList.filter(v => v.wage && v.note === wps) as w}
+               {w.wage} * {workedList.filter(v => (v.note === w.note) && !v.wage && (v.date > w.date)).length + 1} = {(w.wage * (workedList.filter(v => v.note === w.note && !v.wage && v.date > w.date).length + 1)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+               {/each}
+      {/each}
+      <!-- <br>{workedList}{workedPlacesSelect} -->
+    {/if}
 	  </div>
 	  <!-- {workedPlacesSelect} -->
 	</div>
